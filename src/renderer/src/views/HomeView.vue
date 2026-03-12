@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useScanStore } from '@/stores/scan'
 import TreemapView from '@/visualisation/treemap/TreemapView.vue'
 import type { FileNode } from '@shared/types'
@@ -20,11 +20,22 @@ function onDrillDown(node: FileNode): void {
   }
 }
 
+function drillIntoSelection(): void {
+  if (scanStore.selectedNode?.type === 'directory') {
+    viewRoot.value = scanStore.selectedNode
+  }
+}
+
 function goUp(): void {
   if (!viewRoot.value || !scanStore.rootNode) return
-  // Find the parent of viewRoot by walking from the root
   const parent = findParent(scanStore.rootNode, viewRoot.value.path)
   viewRoot.value = parent ?? scanStore.rootNode
+}
+
+function selectParent(): void {
+  if (!scanStore.selectedNode || !scanStore.rootNode) return
+  const parent = findParent(scanStore.rootNode, scanStore.selectedNode.path)
+  if (parent) scanStore.selectNode(parent)
 }
 
 function findParent(node: FileNode, targetPath: string): FileNode | null {
@@ -43,10 +54,17 @@ function onHover(node: FileNode | null): void {
   hoveredPath.value = node?.path ?? null
 }
 
-const isDrilledIn = ref(false)
-watch(viewRoot, () => {
-  isDrilledIn.value = viewRoot.value !== null && scanStore.rootNode !== null && viewRoot.value.path !== scanStore.rootNode.path
-})
+const isDrilledIn = computed(() =>
+  viewRoot.value !== null && scanStore.rootNode !== null && viewRoot.value.path !== scanStore.rootNode.path
+)
+
+const canSelectParent = computed(() =>
+  scanStore.selectedNode !== null && scanStore.rootNode !== null && scanStore.selectedNode.path !== scanStore.rootNode.path
+)
+
+const canDrillIn = computed(() =>
+  scanStore.selectedNode?.type === 'directory'
+)
 </script>
 
 <template>
@@ -57,8 +75,11 @@ watch(viewRoot, () => {
     </div>
     <div v-else-if="viewRoot" class="viz-container">
       <div class="viz-toolbar">
-        <button v-if="isDrilledIn" class="up-button" @click="goUp">Up</button>
+        <button v-if="isDrilledIn" class="toolbar-button" @click="goUp">Up</button>
         <span class="viz-path">{{ viewRoot.path }}</span>
+        <span class="toolbar-spacer" />
+        <button v-if="canSelectParent" class="toolbar-button" @click="selectParent">Select Parent</button>
+        <button v-if="canDrillIn" class="toolbar-button toolbar-button--primary" @click="drillIntoSelection">Drill Into</button>
       </div>
       <TreemapView
         :data="viewRoot"
@@ -137,7 +158,11 @@ watch(viewRoot, () => {
   white-space: nowrap;
 }
 
-.up-button {
+.toolbar-spacer {
+  flex: 1;
+}
+
+.toolbar-button {
   padding: 3px 10px;
   font-size: 12px;
   font-weight: 600;
@@ -149,8 +174,17 @@ watch(viewRoot, () => {
   transition: background 0.15s;
 }
 
-.up-button:hover {
+.toolbar-button:hover {
   background: #3a3a5a;
+}
+
+.toolbar-button--primary {
+  background: #e94560;
+  border-color: #e94560;
+}
+
+.toolbar-button--primary:hover {
+  background: #c73650;
 }
 
 .status-bar {
