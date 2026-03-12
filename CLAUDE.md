@@ -4,7 +4,9 @@
 
 **Out Of Space** is a macOS desktop app for visualising disk space usage in local directories. It renders interactive treemaps so users can quickly see what's consuming space.
 
-- **Tech stack:** Electron + Vue 3 + D3.js
+- **Tech stack:** Electron + Vue 3 + D3.js + TypeScript
+- **Build tooling:** electron-vite (single package.json, unified Vite config) + electron-builder
+- **State management:** Pinia
 - **Target:** macOS (primary), portfolio showcase project
 - **License:** MIT
 
@@ -18,13 +20,38 @@ Read these to understand the project context:
 | `DESIGN.md`    | Design decisions, scope, constraints, rationale  | Before proposing architecture changes  |
 | `GOALS.md`     | High-level goals and progress checklist          | To understand current state & priorities|
 
+## Architecture
+
+### Three code contexts
+
+| Context    | Directory       | tsconfig           | Runs in         |
+|------------|-----------------|--------------------|-----------------|
+| Main       | `src/main/`     | `tsconfig.node.json` | Node.js (Electron main process) |
+| Preload    | `src/preload/`  | `tsconfig.node.json` | Node.js (sandboxed bridge)      |
+| Renderer   | `src/renderer/` | `tsconfig.web.json`  | Chromium (Vue 3 app)            |
+| Shared     | `src/shared/`   | Both                 | Compiled independently per target |
+
+### Path aliases
+
+- `@shared/*` → `src/shared/*` (available in all contexts)
+- `@/*` → `src/renderer/src/*` (renderer only)
+
+### Shared types convention
+
+`src/shared/` should contain **only types, interfaces, and string constants** — not classes or stateful code. Runtime values are independently bundled per process.
+
+### IPC pattern
+
+IPC channel names are defined as constants in `src/shared/ipc-channels.ts`. The preload script exposes a typed `window.api` object (defined in `src/shared/types.ts` as `ElectronApi`).
+
+### Visualisation abstraction
+
+`src/renderer/src/visualisation/` contains a shared interface (`types.ts`) and per-mode subdirectories (`treemap/`, `sunburst/`). All viz components share the same props/emits contract.
+
 ## Conventions
 
 - **Scope discipline:** v1 is visualisation-only plus "Show in Finder" / "Open in Terminal". No destructive file operations.
 - **Platform:** Assume macOS unless otherwise noted.
+- **Router:** Must use `createWebHashHistory()` (Electron requirement).
+- **Dependencies:** Only main-process runtime externals go in `dependencies`. Everything else (including Vue, D3) is a `devDependency` since Vite bundles them into the renderer.
 - **Doc maintenance:** After completing a feature or making significant changes, check if README.md, DESIGN.md, or GOALS.md need updating. Keep them in sync with reality.
-
-## Proposals for Future Sessions
-
-- Consider adding an `ARCHITECTURE.md` once the codebase has enough structure to document (after Phase 1).
-- The open questions in DESIGN.md should be resolved during the Step 2 planning session.

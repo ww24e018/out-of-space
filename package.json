@@ -1,0 +1,33 @@
+{
+  "name": "out-of-space",
+  "version": "0.1.0",
+  "description": "Visualise what's eating your disk space",
+  "main": "./out/main/index.js",
+  "author": "Florian Scholz",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "postinstall": "electron-builder install-app-deps",
+    "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
+    "typecheck:web": "vue-tsc --noEmit -p tsconfig.web.json",
+    "typecheck": "npm run typecheck:node && npm run typecheck:web"
+  },
+  "devDependencies": {
+    "@electron-toolkit/utils": "^4.0.0",
+    "@types/d3": "^7.4.3",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "d3": "^7.9.0",
+    "electron": "^41.0.0",
+    "electron-builder": "^26.8.1",
+    "electron-vite": "^5.0.0",
+    "pinia": "^3.0.4",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vue": "^3.5.30",
+    "vue-router": "^5.0.3",
+    "vue-tsc": "^3.2.5"
+  }
+}

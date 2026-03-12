@@ -8,22 +8,54 @@ Built with Electron, Vue 3, and D3.
 
 ## Status
 
-Early development — project scaffold phase.
+Early development — tech stack scaffolded, core features next.
 
 ## Getting Started
 
-> Setup and run instructions will be added once the tech stack is scaffolded (Step 2).
+### Prerequisites
+
+- Node.js (v18+)
+- npm
+
+### Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start dev server with hot reload
+npm run dev
+
+# Type check
+npm run typecheck
+
+# Production build
+npm run build
+```
+
+## Project Structure
+
+```
+src/
+  main/              # Electron main process (app lifecycle, window management)
+  preload/           # Preload scripts (IPC bridge between main and renderer)
+  shared/            # Types and constants shared between main and renderer
+  renderer/          # Vue 3 app (UI, visualisation)
+    src/
+      components/    # Reusable Vue components
+      composables/   # Vue composables
+      stores/        # Pinia stores
+      views/         # Top-level views
+      visualisation/ # D3 visualisation layer (treemap, sunburst)
+```
 
 ## Features (Planned)
 
 - Scan any local folder and visualise disk usage as an interactive treemap
+- Switchable visualisation modes (treemap, sunburst)
 - Drill down into subdirectories
 - "Show in Finder" and "Open in Terminal" context actions
 - macOS-first design
-
-## Project Structure
-
-> Will be documented after initial tech scaffold.
 
 ## Screenshots
 

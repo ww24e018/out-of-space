@@ -21,7 +21,10 @@ A lightweight desktop app that scans a local directory and presents an interacti
 | Shell          | Electron         | Desktop app, native OS integration |
 | UI Framework   | Vue 3            | Composition API, SFC               |
 | Visualisation  | D3.js            | Treemap layout + rendering         |
-| Build tooling  | TBD (Step 2)     | Likely Vite + electron-builder     |
+| Build tooling  | electron-vite    | Unified Vite config for all targets|
+| Packaging      | electron-builder | macOS .dmg + .zip                  |
+| State          | Pinia            | Vue's official store               |
+| Language       | TypeScript       | Strict mode, 3 tsconfig files      |
 
 ### Why This Stack?
 
@@ -54,9 +57,14 @@ A lightweight desktop app that scans a local directory and presents an interacti
 - Visualisation should remain responsive during interaction (zooming, hovering)
 - No elevated permissions required — scan only what the user's account can read
 
-## Open Questions (for Step 2)
+## Resolved Decisions (Step 2)
 
-- Exact build tooling (Vite? electron-vite? electron-forge?)
-- State management approach (Pinia, or simple provide/inject?)
-- Filesystem scanning strategy (Node.js fs, or a native addon for speed?)
-- Treemap vs. sunburst vs. switchable visualisation modes
+- **Build tooling:** electron-vite (alex8088) — single `package.json`, unified Vite config with 3 targets (main, preload, renderer)
+- **State management:** Pinia from the start
+- **Visualisation:** Switchable modes — treemap (primary) + sunburst, sharing a common component interface
+- **Shared types:** `src/shared/` directory with path aliases, types-and-constants only (no runtime state)
+
+## Open Questions
+
+- Filesystem scanning strategy (Node.js `fs.readdir` recursive, or a native addon for speed?)
+- Colour scheme for file types in visualisations
