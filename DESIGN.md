@@ -64,7 +64,10 @@ A lightweight desktop app that scans a local directory and presents an interacti
 - **Visualisation:** Switchable modes — treemap (primary) + sunburst, sharing a common component interface
 - **Shared types:** `src/shared/` directory with path aliases, types-and-constants only (no runtime state)
 
+## Resolved Decisions (Step 3)
+
+- **Filesystem scanning:** Recursive `fs.readdir` + `lstat` per level, pure Node.js. No native addon — scanning is I/O-bound and async fs calls don't block the event loop. Symlinks are skipped (avoids cycle detection; real targets counted at actual location). Unreadable entries are silently skipped. Worker thread deferred to post-v1 if profiling shows need.
+
 ## Open Questions
 
-- Filesystem scanning strategy (Node.js `fs.readdir` recursive, or a native addon for speed?)
 - Colour scheme for file types in visualisations
