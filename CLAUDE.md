@@ -83,3 +83,13 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 
 - Reference issues in branch names: `bugfix/issue42-fix-treemap-resize`
 - Reference issues in commit messages where relevant (`Fixes #42`, `Relates to #12`).
+
+## Testing
+
+- **Framework:** Vitest (renderer and shared code)
+- **Test location:** `tests/vitest/` — Vitest's `include` is scoped here exclusively
+- **Environment:** jsdom (global default; sufficient at current project scale)
+- **Future:** `tests/node/` is reserved for Node's built-in test runner (not managed by Vitest)
+- **Run:** `npm test` (single run), `npm run test:watch` (watch mode)
+- **Mocking `window.api`:** Use `vi.stubGlobal('api', mockApi)` in renderer tests
+- **Pinia in tests:** `setActivePinia(createPinia())` in `beforeEach` — no `@pinia/testing` needed
