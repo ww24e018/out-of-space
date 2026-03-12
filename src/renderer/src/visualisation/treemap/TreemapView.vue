@@ -53,10 +53,9 @@ function onNodeDblClick(node: LayoutNode): void {
 function clampTooltip(cursorX: number, cursorY: number): { x: number; y: number } {
   const tooltipW = 200 // estimated max width
   const tooltipH = 50 // estimated max height
-  let x = cursorX + 12
-  let y = cursorY + 12
-  if (x + tooltipW > width.value) x = cursorX - tooltipW - 4
-  if (y + tooltipH > height.value) y = cursorY - tooltipH - 4
+  const gap = 12
+  const x = cursorX + gap + tooltipW > width.value ? cursorX - tooltipW - gap : cursorX + gap
+  const y = cursorY + gap + tooltipH > height.value ? cursorY - tooltipH - gap : cursorY + gap
   return { x: Math.max(0, x), y: Math.max(0, y) }
 }
 
