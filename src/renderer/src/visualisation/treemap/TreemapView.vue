@@ -10,6 +10,7 @@ const props = defineProps<VisualisationProps>()
 const emit = defineEmits<{
   select: [node: FileNode]
   drillDown: [node: FileNode]
+  hover: [node: FileNode | null]
 }>()
 
 const containerRef = ref<HTMLDivElement | null>(null)
@@ -34,7 +35,9 @@ function nodeHeight(node: LayoutNode): number {
 }
 
 function showLabel(node: LayoutNode): boolean {
-  return nodeWidth(node) > 40 && nodeHeight(node) > 16
+  // Only label leaf nodes (height === 0 in d3 hierarchy) to avoid
+  // parent labels bleeding through children on hover opacity change
+  return node.height === 0 && nodeWidth(node) > 40 && nodeHeight(node) > 16
 }
 
 function onNodeClick(node: LayoutNode): void {
@@ -47,27 +50,36 @@ function onNodeDblClick(node: LayoutNode): void {
   }
 }
 
+function clampTooltip(cursorX: number, cursorY: number): { x: number; y: number } {
+  const tooltipW = 200 // estimated max width
+  const tooltipH = 50 // estimated max height
+  let x = cursorX + 12
+  let y = cursorY + 12
+  if (x + tooltipW > width.value) x = cursorX - tooltipW - 4
+  if (y + tooltipH > height.value) y = cursorY - tooltipH - 4
+  return { x: Math.max(0, x), y: Math.max(0, y) }
+}
+
 function onNodeEnter(event: MouseEvent, node: LayoutNode): void {
   const rect = containerRef.value?.getBoundingClientRect()
   if (!rect) return
-  tooltip.value = {
-    x: event.clientX - rect.left + 12,
-    y: event.clientY - rect.top + 12,
-    name: node.data.name,
-    size: formatBytes(node.data.size)
-  }
+  const pos = clampTooltip(event.clientX - rect.left, event.clientY - rect.top)
+  tooltip.value = { ...pos, name: node.data.name, size: formatBytes(node.data.size) }
+  emit('hover', node.data)
 }
 
 function onNodeMove(event: MouseEvent): void {
   if (!tooltip.value) return
   const rect = containerRef.value?.getBoundingClientRect()
   if (!rect) return
-  tooltip.value.x = event.clientX - rect.left + 12
-  tooltip.value.y = event.clientY - rect.top + 12
+  const pos = clampTooltip(event.clientX - rect.left, event.clientY - rect.top)
+  tooltip.value.x = pos.x
+  tooltip.value.y = pos.y
 }
 
 function onNodeLeave(): void {
   tooltip.value = null
+  emit('hover', null)
 }
 
 let resizeObserver: ResizeObserver | null = null

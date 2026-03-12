@@ -37,6 +37,12 @@ function findParent(node: FileNode, targetPath: string): FileNode | null {
   return null
 }
 
+const hoveredPath = ref<string | null>(null)
+
+function onHover(node: FileNode | null): void {
+  hoveredPath.value = node?.path ?? null
+}
+
 const isDrilledIn = ref(false)
 watch(viewRoot, () => {
   isDrilledIn.value = viewRoot.value !== null && scanStore.rootNode !== null && viewRoot.value.path !== scanStore.rootNode.path
@@ -59,7 +65,11 @@ watch(viewRoot, () => {
         :selected-node="scanStore.selectedNode"
         @select="scanStore.selectNode"
         @drill-down="onDrillDown"
+        @hover="onHover"
       />
+      <div class="status-bar">
+        <span v-if="hoveredPath" class="status-path">{{ hoveredPath }}</span>
+      </div>
     </div>
   </div>
 </template>
@@ -141,5 +151,23 @@ watch(viewRoot, () => {
 
 .up-button:hover {
   background: #3a3a5a;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  padding: 4px 12px;
+  background: #16162a;
+  border-top: 1px solid #2a2a4a;
+  flex-shrink: 0;
+  min-height: 24px;
+}
+
+.status-path {
+  font-size: 11px;
+  color: #808098;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

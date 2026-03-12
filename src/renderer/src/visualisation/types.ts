@@ -17,4 +17,6 @@ export interface VisualisationEmits {
   (e: 'select', node: FileNode): void
   /** Emitted when the user drills into a directory */
   (e: 'drillDown', node: FileNode): void
+  /** Emitted when the user hovers a node (null when leaving) */
+  (e: 'hover', node: FileNode | null): void
 }

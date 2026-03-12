@@ -5,6 +5,7 @@ defineProps<VisualisationProps>()
 defineEmits<{
   select: [node: VisualisationProps['data']]
   drillDown: [node: VisualisationProps['data']]
+  hover: [node: VisualisationProps['data'] | null]
 }>()
 </script>
 
