@@ -6,6 +6,8 @@
 
 Built with Electron, Vue 3, and D3.
 
+![Treemap visualisation of a scanned directory](docs/early-screenshot.png)
+
 ## Status
 
 Work in progress — directory scanning and interactive treemap visualisation are functional. Context actions and packaging remain.
@@ -59,10 +61,6 @@ src/
 - Switchable visualisation modes (treemap implemented, sunburst planned)
 - "Show in Finder" and "Open in Terminal" context actions (planned)
 - macOS-first design
-
-## Screenshots
-
-![Treemap visualisation of a scanned directory](docs/early-screenshot.png)
 
 ## License
 
