@@ -8,7 +8,7 @@ Built with Electron, Vue 3, and D3.
 
 ## Status
 
-Early development — tech stack scaffolded, core features next.
+Work in progress — directory scanning and interactive treemap visualisation are functional. Context actions and packaging remain.
 
 ## Getting Started
 
@@ -49,17 +49,20 @@ src/
       visualisation/ # D3 visualisation layer (treemap, sunburst)
 ```
 
-## Features (Planned)
+## Features
 
 - Scan any local folder and visualise disk usage as an interactive treemap
-- Switchable visualisation modes (treemap, sunburst)
-- Drill down into subdirectories
-- "Show in Finder" and "Open in Terminal" context actions
+- Colour-coded rectangles by file type (code, images, documents, archives, etc.)
+- Drill down into subdirectories, navigate with Select Parent / Drill Into / Up
+- Hover tooltips with file name and human-readable size
+- Status bar showing full path of hovered item
+- Switchable visualisation modes (treemap implemented, sunburst planned)
+- "Show in Finder" and "Open in Terminal" context actions (planned)
 - macOS-first design
 
 ## Screenshots
 
-> Coming soon.
+![Treemap visualisation of a scanned directory](docs/early-screenshot.png)
 
 ## License
 

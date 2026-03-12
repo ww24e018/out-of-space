@@ -38,7 +38,7 @@ Read these to understand the project context:
 
 ### Shared types convention
 
-`src/shared/` should contain **only types, interfaces, and string constants** — not classes or stateful code. Runtime values are independently bundled per process.
+`src/shared/` should contain **only types, interfaces, string constants, and pure utility functions** — not classes or stateful code. Runtime values are independently bundled per process.
 
 ### IPC pattern
 
