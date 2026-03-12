@@ -65,6 +65,7 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 1. User reports observations from testing (expected vs. actual, errors, which action triggered it).
 2. Claude asks clarifying questions if needed, then creates the issue.
 3. One issue per distinct problem — easier to close and track.
+4. **Always read issues with comments** (`gh issue view N --comments`): when starting work on an issue, when listing issues for prioritisation, or when an issue is referenced in conversation. Comments may contain decisions and context not present in the original description.
 
 ### Issue conventions
 
