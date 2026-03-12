@@ -7,13 +7,16 @@ High-level goals and progress tracking.
 ### Phase 0 — Scaffold
 - [x] Project scaffold (README, DESIGN, GOALS, CLAUDE.md)
 - [x] MIT License
-- [ ] Connect to GitHub remote
+- [x] Connect to GitHub remote
 
 ### Phase 1 — Tech Stack Setup
-- [ ] Initialise Electron + Vue 3 + D3 project
-- [ ] Build tooling configuration
-- [ ] Dev workflow (hot reload, debugging)
-- [ ] Basic app window opens
+- [x] Initialise Electron + Vue 3 + D3 project
+- [x] Build tooling configuration (electron-vite + electron-builder)
+- [x] Dev workflow (hot reload, debugging)
+- [x] Basic app window opens
+- [x] TypeScript setup (3 tsconfigs, shared types)
+- [x] Pinia store scaffold
+- [x] Visualisation abstraction (treemap + sunburst stubs)
 
 ### Phase 2 — Core Features
 - [ ] Folder picker / drag-and-drop folder selection
