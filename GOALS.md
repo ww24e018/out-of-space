@@ -19,11 +19,11 @@ High-level goals and progress tracking.
 - [x] Visualisation abstraction (treemap + sunburst stubs)
 
 ### Phase 2 — Core Features
-- [ ] Folder picker / drag-and-drop folder selection
-- [ ] Recursive directory scanning (async, off main thread)
-- [ ] Treemap visualisation with D3
-- [ ] Drill-down navigation (click into subdirectories)
-- [ ] Hover tooltips (file name, size, type)
+- [x] Folder picker / drag-and-drop folder selection
+- [x] Recursive directory scanning (async, off main thread)
+- [x] Treemap visualisation with D3
+- [x] Drill-down navigation (click into subdirectories)
+- [x] Hover tooltips (file name, size, type)
 - [ ] "Show in Finder" context action
 - [ ] "Open in Terminal" context action
 

@@ -68,6 +68,12 @@ A lightweight desktop app that scans a local directory and presents an interacti
 
 - **Filesystem scanning:** Recursive `fs.readdir` + `lstat` per level, pure Node.js. No native addon — scanning is I/O-bound and async fs calls don't block the event loop. Symlinks are skipped (avoids cycle detection; real targets counted at actual location). Unreadable entries are silently skipped. Worker thread deferred to post-v1 if profiling shows need.
 
+## Resolved Decisions (Step 4)
+
+- **Colour scheme:** Extension-based category mapping (~8 buckets: code, images, documents, archives, media, config, data, other) with a curated palette matching the dark theme. Directories use depth-based muted shades. Implemented in `colorScale.ts`, reusable across visualisation modes.
+- **D3 integration pattern:** D3 computes layout only (`d3.hierarchy` + `d3.treemap`); Vue owns the DOM via `v-for` over positioned nodes in SVG. No `d3.select()` DOM manipulation.
+- **Tooltip approach:** Positioned div overlay (not SVG `<title>`) for better styling control.
+
 ## Open Questions
 
-- Colour scheme for file types in visualisations
+(none currently)
