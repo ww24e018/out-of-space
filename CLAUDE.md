@@ -59,6 +59,7 @@ IPC channel names are defined as constants in `src/shared/ipc-channels.ts`. The 
 - **Router:** Must use `createWebHashHistory()` (Electron requirement).
 - **Dependencies:** Only main-process runtime externals go in `dependencies`. Everything else (including Vue, D3) is a `devDependency` since Vite bundles them into the renderer.
 - **Doc maintenance:** After completing a feature or making significant changes, check if README.md, DESIGN.md, or GOALS.md need updating. Keep them in sync with reality.
+- **Version pinning:** When specifying versions (Node.js, Electron, Actions, etc.) in CI configs, Dockerfiles, or plans, verify against actual release data (e.g. nodejs.org, releases.electronjs.org) rather than assuming from memory. Version landscapes shift frequently.
 
 ## Issue Tracking
 
