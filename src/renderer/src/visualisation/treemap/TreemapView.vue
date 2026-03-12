@@ -18,7 +18,12 @@ const height = ref(0)
 
 const tooltip = ref<{ x: number; y: number; name: string; size: string } | null>(null)
 
-const visibleNodes = computed(() => computeTreemapLayout(props.data, width.value, height.value))
+const visibleNodes = computed(() =>
+  computeTreemapLayout(props.data, width.value, height.value).map((node, index) => ({
+    node,
+    clipId: `clip-${index}`
+  }))
+)
 
 function nodeWidth(node: LayoutNode): number {
   return node.x1 - node.x0
@@ -97,7 +102,7 @@ watch(() => props.data, updateSize)
   <div ref="containerRef" class="treemap-container">
     <svg :width="width" :height="height" class="treemap-svg">
       <g
-        v-for="node in visibleNodes"
+        v-for="{ node, clipId } in visibleNodes"
         :key="node.data.path"
         :transform="`translate(${node.x0},${node.y0})`"
         class="treemap-node"
@@ -115,12 +120,12 @@ watch(() => props.data, updateSize)
           stroke="#1a1a2e"
           stroke-width="1"
         />
-        <clipPath :id="`clip-${node.data.path}`">
+        <clipPath :id="clipId">
           <rect :width="nodeWidth(node) - 4" :height="nodeHeight(node) - 2" />
         </clipPath>
         <text
           v-if="showLabel(node)"
-          :clip-path="`url(#clip-${node.data.path})`"
+          :clip-path="`url(#${clipId})`"
           x="4"
           y="13"
           class="treemap-label"
@@ -166,10 +171,14 @@ watch(() => props.data, updateSize)
 }
 
 .treemap-label {
-  fill: rgba(255, 255, 255, 0.85);
+  fill: rgba(255, 255, 255, 0.95);
   font-size: 11px;
   pointer-events: none;
   user-select: none;
+  paint-order: stroke;
+  stroke: rgba(0, 0, 0, 0.6);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
 }
 
 .treemap-tooltip {

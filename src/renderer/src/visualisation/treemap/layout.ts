@@ -1,3 +1,4 @@
+// D3 treemap layout — see https://d3js.org/d3-hierarchy/treemap
 import { hierarchy, treemap, type HierarchyRectangularNode } from 'd3'
 import type { FileNode } from '@shared/types'
 
