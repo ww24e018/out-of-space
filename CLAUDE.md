@@ -55,3 +55,25 @@ IPC channel names are defined as constants in `src/shared/ipc-channels.ts`. The 
 - **Router:** Must use `createWebHashHistory()` (Electron requirement).
 - **Dependencies:** Only main-process runtime externals go in `dependencies`. Everything else (including Vue, D3) is a `devDependency` since Vite bundles them into the renderer.
 - **Doc maintenance:** After completing a feature or making significant changes, check if README.md, DESIGN.md, or GOALS.md need updating. Keep them in sync with reality.
+
+## Issue Tracking
+
+We use **GitHub Issues** (via `gh`) as the shared backlog.
+
+### Workflow
+
+1. User reports observations from testing (expected vs. actual, errors, which action triggered it).
+2. Claude asks clarifying questions if needed, then creates the issue.
+3. One issue per distinct problem — easier to close and track.
+
+### Issue conventions
+
+- **Titles:** Action-oriented ("Fix X when Y", not "Problem with Z") — keeps the backlog scannable.
+- **Labels:** Use `bug`, `enhancement`, etc. to keep things sortable.
+- **Content:** Include reproduction steps, relevant file paths, and error output where applicable.
+- **Design decisions:** If something is a question or design choice rather than a bug, flag that distinction (use `discussion` label or similar).
+
+### Branch ↔ Issue linking
+
+- Reference issues in branch names: `bugfix/issue42-fix-treemap-resize`
+- Reference issues in commit messages where relevant (`Fixes #42`, `Relates to #12`).
