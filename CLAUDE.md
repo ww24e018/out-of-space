@@ -48,6 +48,10 @@ IPC channel names are defined as constants in `src/shared/ipc-channels.ts`. The 
 
 `src/renderer/src/visualisation/` contains a shared interface (`types.ts`) and per-mode subdirectories (`treemap/`, `sunburst/`). All viz components share the same props/emits contract.
 
+### Known Electron quirks (macOS)
+
+- **`representedObject is not a WeakPtrToElectronMenuModelAsNSObject`** — Console warning triggered by clicking the Window menu. This is an upstream Electron/Cocoa menu integration issue, not caused by our code. Harmless (no functional impact). See [electron/electron#23778](https://github.com/electron/electron/pull/23778) for related context. Will resolve with a future Electron update — no action needed on our side.
+
 ## Conventions
 
 - **Scope discipline:** v1 is visualisation-only plus "Show in Finder" / "Open in Terminal". No destructive file operations.
