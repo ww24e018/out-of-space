@@ -78,8 +78,8 @@ const canDrillIn = computed(() =>
         <button v-if="isDrilledIn" class="toolbar-button" @click="goUp">Up</button>
         <span class="viz-path">{{ viewRoot.path }}</span>
         <span class="toolbar-spacer" />
-        <button v-if="canSelectParent" class="toolbar-button" @click="selectParent">Select Parent</button>
         <button v-if="canDrillIn" class="toolbar-button toolbar-button--primary" @click="drillIntoSelection">Drill Into</button>
+        <button v-if="canSelectParent" class="toolbar-button" @click="selectParent">Select Parent</button>
       </div>
       <TreemapView
         :data="viewRoot"
