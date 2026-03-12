@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain, shell } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import { IpcChannels } from '@shared/ipc-channels'
-import { handleSelectFolder } from './ipc-handlers'
+import { handleSelectFolder, handleScanFolder } from './ipc-handlers'
 
 function createWindow(): void {
   const mainWindow = new BrowserWindow({
@@ -35,6 +35,7 @@ function createWindow(): void {
 
 app.whenReady().then(() => {
   ipcMain.handle(IpcChannels.SELECT_FOLDER, handleSelectFolder)
+  ipcMain.handle(IpcChannels.SCAN_FOLDER, handleScanFolder)
 
   createWindow()
 

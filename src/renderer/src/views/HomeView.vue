@@ -12,7 +12,7 @@ const scanStore = useScanStore()
     </div>
     <div v-else class="viz-container">
       <!-- Visualisation component will be mounted here -->
-      <p>Scanned: {{ scanStore.rootNode.path }} ({{ scanStore.rootNode.children?.length ?? 0 }} items)</p>
+      <p>Scanned: {{ scanStore.rootNode.path }} ({{ scanStore.rootNode.children?.length ?? 0 }} direct children)</p>
     </div>
   </div>
 </template>
