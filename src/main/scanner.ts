@@ -52,6 +52,6 @@ async function scanChildren(dirPath: string): Promise<FileNode[]> {
     })
   )
 
-  // Remove skipped entries (nulls from errors, symlinks, or unknown types above)
+  // Remove skipped entries (nulls from errors, symlinks, or non-file/non-directory entries above)
   return results.filter((r): r is FileNode => r !== null)
 }
