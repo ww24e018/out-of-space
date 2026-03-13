@@ -71,26 +71,30 @@ const canDrillIn = computed(() =>
   scanStore.selectedNode?.type === 'directory'
 )
 
+const hasSelection = computed(() => scanStore.selectedNode !== null)
+
 const contextMenu = ref<{ node: FileNode; x: number; y: number } | null>(null)
 
 function onContextMenu(payload: { node: FileNode; x: number; y: number }): void {
   contextMenu.value = payload
 }
 
-async function showInFinder(): Promise<void> {
-  if (!contextMenu.value) return
+async function showInFinder(node?: FileNode): Promise<void> {
+  const target = node ?? contextMenu.value?.node ?? scanStore.selectedNode
+  if (!target) return
   try {
-    await window.api.showInFinder(contextMenu.value.node.path)
+    await window.api.showInFinder(target.path)
   } catch {
     // Path may no longer exist
   }
   contextMenu.value = null
 }
 
-async function openInTerminal(): Promise<void> {
-  if (!contextMenu.value) return
+async function openInTerminal(node?: FileNode): Promise<void> {
+  const target = node ?? contextMenu.value?.node ?? scanStore.selectedNode
+  if (!target) return
   try {
-    await window.api.openInTerminal(contextMenu.value.node.path)
+    await window.api.openInTerminal(target.path)
   } catch {
     // Path may no longer exist or is not a directory
   }
@@ -108,6 +112,8 @@ async function openInTerminal(): Promise<void> {
       <div class="viz-toolbar">
         <button v-if="isDrilledIn" class="toolbar-button" @click="goUp">Up</button>
         <span class="viz-path">{{ viewRoot.path }}</span>
+        <button v-if="hasSelection" class="toolbar-button" @click="showInFinder()">Finder</button>
+        <button v-if="canDrillIn" class="toolbar-button" @click="openInTerminal()">Terminal</button>
         <span class="toolbar-spacer" />
         <button v-if="canDrillIn" class="toolbar-button toolbar-button--primary" @click="drillIntoSelection">Drill Into</button>
         <button v-if="canSelectParent" class="toolbar-button" @click="selectParent">Select Parent</button>
