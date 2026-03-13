@@ -24,8 +24,8 @@ High-level goals and progress tracking.
 - [x] Treemap visualisation with D3
 - [x] Drill-down navigation (click into subdirectories)
 - [x] Hover tooltips (file name, size, type)
-- [ ] "Show in Finder" context action
-- [ ] "Open in Terminal" context action
+- [x] "Show in Finder" context action
+- [x] "Open in Terminal" context action
 
 ### Phase 3 — Polish
 - [ ] Progress indicator during scanning

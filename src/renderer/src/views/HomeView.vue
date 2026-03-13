@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { useScanStore } from '@/stores/scan'
 import TreemapView from '@/visualisation/treemap/TreemapView.vue'
+import ContextMenu from '@/components/ContextMenu.vue'
 import type { FileNode } from '@shared/types'
 
 const scanStore = useScanStore()
@@ -69,6 +70,32 @@ const canSelectParent = computed(() =>
 const canDrillIn = computed(() =>
   scanStore.selectedNode?.type === 'directory'
 )
+
+const contextMenu = ref<{ node: FileNode; x: number; y: number } | null>(null)
+
+function onContextMenu(payload: { node: FileNode; x: number; y: number }): void {
+  contextMenu.value = payload
+}
+
+async function showInFinder(): Promise<void> {
+  if (!contextMenu.value) return
+  try {
+    await window.api.showInFinder(contextMenu.value.node.path)
+  } catch {
+    // Path may no longer exist
+  }
+  contextMenu.value = null
+}
+
+async function openInTerminal(): Promise<void> {
+  if (!contextMenu.value) return
+  try {
+    await window.api.openInTerminal(contextMenu.value.node.path)
+  } catch {
+    // Path may no longer exist or is not a directory
+  }
+  contextMenu.value = null
+}
 </script>
 
 <template>
@@ -91,11 +118,21 @@ const canDrillIn = computed(() =>
         @select="scanStore.selectNode"
         @drill-down="onDrillDown"
         @hover="onHover"
+        @context-menu="onContextMenu"
       />
       <div class="status-bar">
         <span v-if="hoveredPath" class="status-path">{{ hoveredPath }}</span>
       </div>
     </div>
+    <ContextMenu
+      v-if="contextMenu"
+      :x="contextMenu.x"
+      :y="contextMenu.y"
+      :node="contextMenu.node"
+      @show-in-finder="showInFinder"
+      @open-in-terminal="openInTerminal"
+      @close="contextMenu = null"
+    />
   </div>
 </template>
 
