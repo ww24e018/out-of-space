@@ -53,6 +53,11 @@ function findParent(node: FileNode, targetPath: string): FileNode | null {
   return null
 }
 
+function rescan(): void {
+  if (!scanStore.rootNode || scanStore.isScanning) return
+  scanStore.scan(scanStore.rootNode.path)
+}
+
 const hoveredPath = ref<string | null>(null)
 
 function onHover(node: FileNode | null): void {
@@ -114,6 +119,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
     </div>
     <div v-else-if="viewRoot" class="viz-container">
       <div class="viz-rootbar">
+        <button class="toolbar-button" :disabled="scanStore.isScanning" @click="rescan">Rescan</button>
         <button v-if="isDrilledIn" class="toolbar-button" @click="goUp">Up</button>
         <span class="viz-path">{{ viewRoot.path }}</span>
       </div>
@@ -246,8 +252,13 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   transition: background 0.15s;
 }
 
-.toolbar-button:hover {
+.toolbar-button:hover:not(:disabled) {
   background: #3a3a5a;
+}
+
+.toolbar-button:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
 .toolbar-button--primary {
