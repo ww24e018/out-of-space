@@ -5,8 +5,10 @@ import type { FileNode } from '@shared/types'
 import { computeTreemapLayout, type LayoutNode } from './layout'
 import { colorForNode } from './colorScale'
 import { formatBytes } from '@shared/format'
+import { usePaletteStore } from '../../stores/palette'
 
 const props = defineProps<VisualisationProps>()
+const paletteStore = usePaletteStore()
 const emit = defineEmits<{
   select: [node: FileNode]
   drillDown: [node: FileNode]
@@ -134,7 +136,7 @@ watch(() => props.data, updateSize)
         <rect
           :width="nodeWidth(node)"
           :height="nodeHeight(node)"
-          :fill="colorForNode(node)"
+          :fill="colorForNode(node, paletteStore.currentPalette)"
         />
         <clipPath :id="clipId">
           <rect :width="nodeWidth(node) - 4" :height="nodeHeight(node) - 2" />

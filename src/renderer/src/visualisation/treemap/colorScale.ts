@@ -1,17 +1,5 @@
 import type { LayoutNode } from './layout'
-
-const CATEGORY_COLOURS: Record<string, string> = {
-  code: '#e94560',
-  image: '#f5a623',
-  document: '#50c4ed',
-  archive: '#a855f7',
-  media: '#ec4899',
-  config: '#8b95a5',
-  data: '#10b981',
-  other: '#6b7280'
-}
-
-const DIRECTORY_COLOURS = ['#2a2a4a', '#33335a', '#3d3d6a']
+import type { ColorPalette } from '../palettes'
 
 const EXTENSION_MAP: Record<string, string> = {
   // Code
@@ -46,11 +34,11 @@ function getCategory(name: string): string {
   return EXTENSION_MAP[ext] ?? 'other'
 }
 
-export function colorForNode(node: LayoutNode): string {
+export function colorForNode(node: LayoutNode, palette: ColorPalette): string {
   if (node.data.type === 'directory') {
-    const depth = Math.min(node.depth, DIRECTORY_COLOURS.length - 1)
-    return DIRECTORY_COLOURS[depth]
+    const depth = Math.min(node.depth, palette.directories.length - 1)
+    return palette.directories[depth]
   }
   const category = getCategory(node.data.name)
-  return CATEGORY_COLOURS[category]
+  return palette.categories[category]
 }
