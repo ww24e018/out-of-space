@@ -82,7 +82,7 @@ We use **GitHub Issues** (via `gh`) as the shared backlog.
 
 ### Branch ↔ Issue linking
 
-- Reference issues in branch names: `bugfix/issue42-fix-treemap-resize`
+- Branch naming convention (date vs. issue prefix) is defined in the global `~/.claude/CLAUDE.md`.
 - Reference issues in commit messages where relevant (`Fixes #42`, `Relates to #12`).
 
 ## Testing
