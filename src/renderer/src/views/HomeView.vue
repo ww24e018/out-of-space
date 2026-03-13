@@ -127,7 +127,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
         <span class="selection-path">{{ scanStore.selectedNode!.path }}</span>
         <button class="toolbar-button" @click="showInFinder()">Finder</button>
         <button v-if="isSelectedDirectory" class="toolbar-button" @click="openInTerminal()">Terminal</button>
-        <button v-if="canDrillIn" class="toolbar-button toolbar-button" @click="drillIntoSelection">Drill Into</button>
+        <button v-if="canDrillIn" class="toolbar-button" @click="drillIntoSelection">Drill Into</button>
         <button v-if="canSelectParent" class="toolbar-button" @click="selectParent">Select Parent</button>
       </div>
       <TreemapView
