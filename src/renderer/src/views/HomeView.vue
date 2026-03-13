@@ -221,7 +221,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
 
 .viz-path {
   font-size: 12px;
-  color: var(--c-text-muted);
+  color: var(--c-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -231,7 +231,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   flex: 1;
   min-width: 0;
   font-size: 12px;
-  color: var(--c-text-muted);
+  color: var(--c-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -284,7 +284,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
 
 .status-path {
   font-size: 11px;
-  color: var(--c-text-dim);
+  color: var(--c-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
