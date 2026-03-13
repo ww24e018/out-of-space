@@ -127,7 +127,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
         <span class="selection-path">{{ scanStore.selectedNode!.path }}</span>
         <button class="toolbar-button" @click="showInFinder()">Finder</button>
         <button v-if="isSelectedDirectory" class="toolbar-button" @click="openInTerminal()">Terminal</button>
-        <button v-if="canDrillIn" class="toolbar-button toolbar-button--primary" @click="drillIntoSelection">Drill Into</button>
+        <button v-if="canDrillIn" class="toolbar-button" @click="drillIntoSelection">Drill Into</button>
         <button v-if="canSelectParent" class="toolbar-button" @click="selectParent">Select Parent</button>
       </div>
       <TreemapView
@@ -173,23 +173,23 @@ async function openInTerminal(node?: FileNode): Promise<void> {
 .welcome p {
   margin-bottom: 16px;
   font-size: 16px;
-  color: #a0a0b0;
+  color: var(--c-text-muted);
 }
 
 .welcome button {
   padding: 10px 24px;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
-  background: #e94560;
+  color: var(--c-primary-text);
+  background: var(--c-primary-bg);
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.15s;
 }
 
 .welcome button:hover {
-  background: #c73650;
+  background: var(--c-primary-hover);
 }
 
 .viz-container {
@@ -204,8 +204,8 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
-  background: #16162a;
-  border-bottom: 1px solid #2a2a4a;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
   flex-shrink: 0;
 }
 
@@ -214,14 +214,14 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
-  background: #1a1a32;
-  border-bottom: 1px solid #2a2a4a;
+  background: var(--c-surface-alt);
+  border-bottom: 1px solid var(--c-border);
   flex-shrink: 0;
 }
 
 .viz-path {
   font-size: 12px;
-  color: #a0a0b0;
+  color: var(--c-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -231,7 +231,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   flex: 1;
   min-width: 0;
   font-size: 12px;
-  color: #a0a0b0;
+  color: var(--c-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -244,16 +244,16 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   padding: 3px 10px;
   font-size: 12px;
   font-weight: 600;
-  color: #e0e0f0;
-  background: #2a2a4a;
-  border: 1px solid #3a3a5a;
+  color: var(--c-btn-text);
+  background: var(--c-btn-bg);
+  border: 1px solid var(--c-btn-border);
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.15s;
 }
 
 .toolbar-button:hover:not(:disabled) {
-  background: #3a3a5a;
+  background: var(--c-btn-hover);
 }
 
 .toolbar-button:disabled {
@@ -262,27 +262,29 @@ async function openInTerminal(node?: FileNode): Promise<void> {
 }
 
 .toolbar-button--primary {
-  background: #e94560;
-  border-color: #e94560;
+  color: var(--c-primary-text);
+  background: var(--c-primary-bg);
+  border-color: var(--c-primary-bg);
 }
 
 .toolbar-button--primary:hover {
-  background: #c73650;
+  background: var(--c-primary-hover);
+  border-color: var(--c-primary-hover);
 }
 
 .status-bar {
   display: flex;
   align-items: center;
   padding: 4px 12px;
-  background: #16162a;
-  border-top: 1px solid #2a2a4a;
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-border);
   flex-shrink: 0;
   min-height: 24px;
 }
 
 .status-path {
   font-size: 11px;
-  color: #808098;
+  color: var(--c-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

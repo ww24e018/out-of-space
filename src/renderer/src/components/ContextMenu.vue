@@ -71,8 +71,8 @@ onUnmounted(() => {
 .context-menu {
   position: fixed;
   z-index: 100;
-  background: rgba(20, 20, 40, 0.95);
-  border: 1px solid #3a3a5a;
+  background: var(--c-overlay-bg);
+  border: 1px solid var(--c-overlay-border);
   border-radius: 4px;
   padding: 4px 0;
   min-width: 160px;
@@ -83,7 +83,7 @@ onUnmounted(() => {
   width: 100%;
   padding: 6px 12px;
   font-size: 12px;
-  color: #e0e0f0;
+  color: var(--c-btn-text);
   background: none;
   border: none;
   text-align: left;
@@ -91,6 +91,6 @@ onUnmounted(() => {
 }
 
 .context-item:hover {
-  background: rgba(233, 69, 96, 0.3);
+  background: var(--c-overlay-hover);
 }
 </style>

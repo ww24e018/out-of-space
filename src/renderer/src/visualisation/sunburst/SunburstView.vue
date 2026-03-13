@@ -23,6 +23,6 @@ defineEmits<{
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #a0a0b0;
+  color: var(--c-text-muted);
 }
 </style>

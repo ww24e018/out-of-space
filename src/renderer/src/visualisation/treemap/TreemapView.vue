@@ -135,8 +135,6 @@ watch(() => props.data, updateSize)
           :width="nodeWidth(node)"
           :height="nodeHeight(node)"
           :fill="colorForNode(node)"
-          stroke="#1a1a2e"
-          stroke-width="1"
         />
         <clipPath :id="clipId">
           <rect :width="nodeWidth(node) - 4" :height="nodeHeight(node) - 2" />
@@ -176,6 +174,8 @@ watch(() => props.data, updateSize)
 }
 
 .treemap-node rect {
+  stroke: var(--c-bg);
+  stroke-width: 1;
   transition: opacity 0.15s;
 }
 
@@ -184,7 +184,7 @@ watch(() => props.data, updateSize)
 }
 
 .treemap-node.selected rect {
-  stroke: #e94560;
+  stroke: var(--c-accent);
   stroke-width: 2;
 }
 
@@ -202,12 +202,12 @@ watch(() => props.data, updateSize)
 .treemap-tooltip {
   position: absolute;
   pointer-events: none;
-  background: rgba(20, 20, 40, 0.95);
-  border: 1px solid #3a3a5a;
+  background: var(--c-overlay-bg);
+  border: 1px solid var(--c-overlay-border);
   border-radius: 4px;
   padding: 6px 10px;
   font-size: 12px;
-  color: #e0e0f0;
+  color: var(--c-btn-text);
   white-space: nowrap;
   display: flex;
   flex-direction: column;
