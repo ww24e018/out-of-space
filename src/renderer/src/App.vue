@@ -40,7 +40,7 @@ header {
 header h1 {
   font-size: 18px;
   font-weight: 600;
-  color: var(--c-accent);
+  color: var(--c-text);
 }
 
 main {

@@ -1,58 +1,65 @@
 /* ---------------------------------------------------------------
    Theme: CSS custom properties for light / dark mode
    Dark palette is the default; light activates via OS preference.
+   Base colours derived from the portfolio site (idling.at).
    --------------------------------------------------------------- */
 
 :root {
-  --c-bg: #1a1a2e;
-  --c-text: #e0e0e0;
-  --c-text-muted: #a0a0b0;
-  --c-text-dim: #808098;
+  --c-bg: #0f1117;
+  --c-text: #e8eaf0;
+  --c-text-muted: #8b90a8;
+  --c-text-dim: #6b7084;
 
   --c-accent: #e94560;
-  --c-accent-hover: #c73650;
 
-  --c-header-bg: #16213e;
-  --c-header-border: #0f3460;
+  --c-header-bg: #1a1d27;
+  --c-header-border: #2d3142;
 
-  --c-surface: #16162a;
-  --c-surface-alt: #1a1a32;
-  --c-border: #2a2a4a;
+  --c-surface: #1a1d27;
+  --c-surface-alt: #1e2130;
+  --c-border: #2d3142;
 
-  --c-btn-text: #e0e0f0;
-  --c-btn-bg: #2a2a4a;
-  --c-btn-border: #3a3a5a;
-  --c-btn-hover: #3a3a5a;
+  --c-btn-text: #e8eaf0;
+  --c-btn-bg: #2d3142;
+  --c-btn-border: #4a5168;
+  --c-btn-hover: #3a3f54;
 
-  --c-overlay-bg: rgba(20, 20, 40, 0.95);
-  --c-overlay-border: #3a3a5a;
-  --c-overlay-hover: rgba(233, 69, 96, 0.3);
+  --c-primary-text: #0f1117;
+  --c-primary-bg: #e8eaf0;
+  --c-primary-hover: #c8cad4;
+
+  --c-overlay-bg: rgba(15, 17, 23, 0.95);
+  --c-overlay-border: #4a5168;
+  --c-overlay-hover: rgba(232, 234, 240, 0.1);
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --c-bg: #f5f5f7;
-    --c-text: #1d1d1f;
-    --c-text-muted: #6e6e73;
-    --c-text-dim: #8e8e93;
+    --c-bg: #fafafa;
+    --c-text: #111111;
+    --c-text-muted: #6b7280;
+    --c-text-dim: #9ca3af;
 
     --c-accent: #e94560;
-    --c-accent-hover: #c73650;
 
-    --c-header-bg: #e8e8ed;
-    --c-header-border: #d2d2d7;
+    --c-header-bg: #ffffff;
+    --c-header-border: #e5e7eb;
 
-    --c-surface: #ebebf0;
-    --c-surface-alt: #e2e2e8;
-    --c-border: #d1d1d6;
+    --c-surface: #ffffff;
+    --c-surface-alt: #f3f4f6;
+    --c-border: #e5e7eb;
 
-    --c-btn-text: #1d1d1f;
-    --c-btn-bg: #d8d8de;
-    --c-btn-border: #c8c8ce;
-    --c-btn-hover: #c8c8ce;
+    --c-btn-text: #111111;
+    --c-btn-bg: #e5e7eb;
+    --c-btn-border: #d1d5db;
+    --c-btn-hover: #d1d5db;
+
+    --c-primary-text: #fafafa;
+    --c-primary-bg: #111111;
+    --c-primary-hover: #374151;
 
     --c-overlay-bg: rgba(255, 255, 255, 0.95);
-    --c-overlay-border: #c8c8ce;
-    --c-overlay-hover: rgba(233, 69, 96, 0.15);
+    --c-overlay-border: #d1d5db;
+    --c-overlay-hover: rgba(17, 17, 17, 0.06);
   }
 }

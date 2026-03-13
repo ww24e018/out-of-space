@@ -180,16 +180,16 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   padding: 10px 24px;
   font-size: 14px;
   font-weight: 600;
-  color: #fff;
-  background: var(--c-accent);
+  color: var(--c-primary-text);
+  background: var(--c-primary-bg);
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.15s;
 }
 
 .welcome button:hover {
-  background: var(--c-accent-hover);
+  background: var(--c-primary-hover);
 }
 
 .viz-container {
@@ -262,12 +262,14 @@ async function openInTerminal(node?: FileNode): Promise<void> {
 }
 
 .toolbar-button--primary {
-  background: var(--c-accent);
-  border-color: var(--c-accent);
+  color: var(--c-primary-text);
+  background: var(--c-primary-bg);
+  border-color: var(--c-primary-bg);
 }
 
 .toolbar-button--primary:hover {
-  background: var(--c-accent-hover);
+  background: var(--c-primary-hover);
+  border-color: var(--c-primary-hover);
 }
 
 .status-bar {
