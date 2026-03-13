@@ -3,7 +3,7 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import type { VisualisationProps } from '../types'
 import type { FileNode } from '@shared/types'
 import { computeTreemapLayout, type LayoutNode } from './layout'
-import { colorForNode } from './colorScale'
+import { colorForNode, getCategory } from './colorScale'
 import { formatBytes } from '@shared/format'
 import { usePaletteStore } from '../../stores/palette'
 
@@ -20,7 +20,7 @@ const containerRef = ref<HTMLDivElement | null>(null)
 const width = ref(0)
 const height = ref(0)
 
-const tooltip = ref<{ x: number; y: number; name: string; size: string; type: string } | null>(null)
+const tooltip = ref<{ x: number; y: number; name: string; size: string; label: string; color: string } | null>(null)
 
 const visibleNodes = computed(() =>
   computeTreemapLayout(props.data, width.value, height.value).map((node, index) => ({
@@ -66,7 +66,10 @@ function onNodeEnter(event: MouseEvent, node: LayoutNode): void {
   const rect = containerRef.value?.getBoundingClientRect()
   if (!rect) return
   const pos = clampTooltip(event.clientX - rect.left, event.clientY - rect.top)
-  tooltip.value = { ...pos, name: node.data.name, size: formatBytes(node.data.size), type: node.data.type }
+  const cat = node.data.type === 'directory' ? 'directory' : getCategory(node.data.name)
+  const label = cat.charAt(0).toUpperCase() + cat.slice(1)
+  const color = colorForNode(node, paletteStore.currentPalette)
+  tooltip.value = { ...pos, name: node.data.name, size: formatBytes(node.data.size), label, color }
   emit('hover', node.data)
 }
 
@@ -154,7 +157,8 @@ watch(() => props.data, updateSize)
     </svg>
     <div v-if="tooltip" class="treemap-tooltip" :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }">
       <strong>{{ tooltip.name }}</strong>
-      <span>{{ tooltip.type === 'directory' ? 'Directory' : 'File' }} — {{ tooltip.size }}</span>
+      <span class="tooltip-label"><span class="tooltip-swatch" :style="{ background: tooltip.color }"></span>{{ tooltip.label }}</span>
+      <span>{{ tooltip.size }}</span>
     </div>
   </div>
 </template>
@@ -215,5 +219,20 @@ watch(() => props.data, updateSize)
   flex-direction: column;
   gap: 2px;
   z-index: 10;
+}
+
+.tooltip-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: color-mix(in srgb, var(--c-btn-text) 70%, transparent);
+}
+
+.tooltip-swatch {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
 }
 </style>

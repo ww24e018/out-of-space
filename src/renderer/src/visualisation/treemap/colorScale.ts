@@ -29,7 +29,7 @@ const EXTENSION_MAP: Record<string, string> = {
   csv: 'data', tsv: 'data', parquet: 'data', sqlite: 'data', db: 'data'
 }
 
-function getCategory(name: string): string {
+export function getCategory(name: string): string {
   const ext = name.includes('.') ? name.split('.').pop()!.toLowerCase() : ''
   return EXTENSION_MAP[ext] ?? 'other'
 }
