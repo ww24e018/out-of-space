@@ -38,6 +38,10 @@ function selectParent(): void {
   if (parent) scanStore.selectNode(parent)
 }
 
+// DFS to locate the parent of targetPath — O(n) worst case over the full tree.
+// Acceptable for Phase 1 (typical trees < 50k nodes, sub-10ms). If this becomes
+// a bottleneck, consider storing parent refs on FileNode or tracking a breadcrumb
+// path during navigation.
 function findParent(node: FileNode, targetPath: string): FileNode | null {
   if (!node.children) return null
   for (const child of node.children) {

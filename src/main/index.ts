@@ -21,9 +21,10 @@ function createWindow(): void {
     mainWindow.show()
   })
 
+  // Open links in the system browser instead of spawning new Electron windows
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
-    return { action: 'deny' }
+    return { action: 'deny' } // deny = don't create an Electron window
   })
 
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {

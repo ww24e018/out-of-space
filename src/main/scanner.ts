@@ -31,11 +31,11 @@ async function scanChildren(dirPath: string): Promise<FileNode[]> {
       try {
         stats = await lstat(fullPath)
       } catch {
-        return null
+        return null // Inaccessible (permission denied, deleted mid-scan, etc.)
       }
 
       if (stats.isSymbolicLink()) {
-        return null
+        return null // Skip symlinks to avoid cycles and double-counting
       }
 
       if (stats.isDirectory()) {
@@ -48,9 +48,10 @@ async function scanChildren(dirPath: string): Promise<FileNode[]> {
         return { name: entry, path: fullPath, size: stats.size, type: 'file' }
       }
 
-      return null
+      return null // Not a regular file or directory (socket, FIFO, etc.)
     })
   )
 
+  // Remove skipped entries (nulls from errors, symlinks, or unknown types above)
   return results.filter((r): r is FileNode => r !== null)
 }
