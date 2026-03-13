@@ -73,6 +73,10 @@ const canDrillIn = computed(() =>
 
 const hasSelection = computed(() => scanStore.selectedNode !== null)
 
+const isSelectedDirectory = computed(() =>
+  scanStore.selectedNode?.type === 'directory'
+)
+
 const contextMenu = ref<{ node: FileNode; x: number; y: number } | null>(null)
 
 function onContextMenu(payload: { node: FileNode; x: number; y: number }): void {
@@ -109,12 +113,14 @@ async function openInTerminal(node?: FileNode): Promise<void> {
       <button @click="scanStore.selectAndScan()">Open Folder</button>
     </div>
     <div v-else-if="viewRoot" class="viz-container">
-      <div class="viz-toolbar">
+      <div class="viz-rootbar">
         <button v-if="isDrilledIn" class="toolbar-button" @click="goUp">Up</button>
         <span class="viz-path">{{ viewRoot.path }}</span>
-        <button v-if="hasSelection" class="toolbar-button" @click="showInFinder()">Finder</button>
-        <button v-if="canDrillIn" class="toolbar-button" @click="openInTerminal()">Terminal</button>
-        <span class="toolbar-spacer" />
+      </div>
+      <div v-if="hasSelection" class="viz-toolbar">
+        <span class="selection-path">{{ scanStore.selectedNode!.path }}</span>
+        <button class="toolbar-button" @click="showInFinder()">Finder</button>
+        <button v-if="isSelectedDirectory" class="toolbar-button" @click="openInTerminal()">Terminal</button>
         <button v-if="canDrillIn" class="toolbar-button toolbar-button--primary" @click="drillIntoSelection">Drill Into</button>
         <button v-if="canSelectParent" class="toolbar-button" @click="selectParent">Select Parent</button>
       </div>
@@ -187,12 +193,22 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   min-height: 0;
 }
 
-.viz-toolbar {
+.viz-rootbar {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
   background: #16162a;
+  border-bottom: 1px solid #2a2a4a;
+  flex-shrink: 0;
+}
+
+.viz-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #1a1a32;
   border-bottom: 1px solid #2a2a4a;
   flex-shrink: 0;
 }
@@ -205,11 +221,20 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   white-space: nowrap;
 }
 
-.toolbar-spacer {
+.selection-path {
   flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  color: #a0a0b0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
 }
 
 .toolbar-button {
+  flex-shrink: 0;
+  white-space: nowrap;
   padding: 3px 10px;
   font-size: 12px;
   font-weight: 600;
