@@ -11,6 +11,7 @@ const emit = defineEmits<{
   select: [node: FileNode]
   drillDown: [node: FileNode]
   hover: [node: FileNode | null]
+  contextMenu: [payload: { node: FileNode; x: number; y: number }]
 }>()
 
 const containerRef = ref<HTMLDivElement | null>(null)
@@ -76,6 +77,11 @@ function onNodeMove(event: MouseEvent): void {
   tooltip.value.y = pos.y
 }
 
+function onNodeContextMenu(event: MouseEvent, node: LayoutNode): void {
+  tooltip.value = null
+  emit('contextMenu', { node: node.data, x: event.clientX, y: event.clientY })
+}
+
 function onNodeLeave(): void {
   tooltip.value = null
   emit('hover', null)
@@ -120,6 +126,7 @@ watch(() => props.data, updateSize)
         :class="{ selected: selectedNode?.path === node.data.path }"
         @click.stop="onNodeClick(node)"
         @dblclick.stop="onNodeDblClick(node)"
+        @contextmenu.prevent="onNodeContextMenu($event, node)"
         @mouseenter="onNodeEnter($event, node)"
         @mousemove="onNodeMove"
         @mouseleave="onNodeLeave"

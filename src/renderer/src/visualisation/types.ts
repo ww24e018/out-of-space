@@ -19,4 +19,6 @@ export interface VisualisationEmits {
   (e: 'drillDown', node: FileNode): void
   /** Emitted when the user hovers a node (null when leaving) */
   (e: 'hover', node: FileNode | null): void
+  /** Emitted on right-click; x/y are viewport coordinates for menu positioning */
+  (e: 'contextMenu', payload: { node: FileNode; x: number; y: number }): void
 }

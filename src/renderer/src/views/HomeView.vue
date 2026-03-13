@@ -2,6 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { useScanStore } from '@/stores/scan'
 import TreemapView from '@/visualisation/treemap/TreemapView.vue'
+import ContextMenu from '@/components/ContextMenu.vue'
 import type { FileNode } from '@shared/types'
 
 const scanStore = useScanStore()
@@ -69,6 +70,40 @@ const canSelectParent = computed(() =>
 const canDrillIn = computed(() =>
   scanStore.selectedNode?.type === 'directory'
 )
+
+const hasSelection = computed(() => scanStore.selectedNode !== null)
+
+const isSelectedDirectory = computed(() =>
+  scanStore.selectedNode?.type === 'directory'
+)
+
+const contextMenu = ref<{ node: FileNode; x: number; y: number } | null>(null)
+
+function onContextMenu(payload: { node: FileNode; x: number; y: number }): void {
+  contextMenu.value = payload
+}
+
+async function showInFinder(node?: FileNode): Promise<void> {
+  const target = node ?? contextMenu.value?.node ?? scanStore.selectedNode
+  if (!target) return
+  try {
+    await window.api.showInFinder(target.path)
+  } catch {
+    // Path may no longer exist
+  }
+  contextMenu.value = null
+}
+
+async function openInTerminal(node?: FileNode): Promise<void> {
+  const target = node ?? contextMenu.value?.node ?? scanStore.selectedNode
+  if (!target) return
+  try {
+    await window.api.openInTerminal(target.path)
+  } catch {
+    // Path may no longer exist or is not a directory
+  }
+  contextMenu.value = null
+}
 </script>
 
 <template>
@@ -78,10 +113,14 @@ const canDrillIn = computed(() =>
       <button @click="scanStore.selectAndScan()">Open Folder</button>
     </div>
     <div v-else-if="viewRoot" class="viz-container">
-      <div class="viz-toolbar">
+      <div class="viz-rootbar">
         <button v-if="isDrilledIn" class="toolbar-button" @click="goUp">Up</button>
         <span class="viz-path">{{ viewRoot.path }}</span>
-        <span class="toolbar-spacer" />
+      </div>
+      <div v-if="hasSelection" class="viz-toolbar">
+        <span class="selection-path">{{ scanStore.selectedNode!.path }}</span>
+        <button class="toolbar-button" @click="showInFinder()">Finder</button>
+        <button v-if="isSelectedDirectory" class="toolbar-button" @click="openInTerminal()">Terminal</button>
         <button v-if="canDrillIn" class="toolbar-button toolbar-button--primary" @click="drillIntoSelection">Drill Into</button>
         <button v-if="canSelectParent" class="toolbar-button" @click="selectParent">Select Parent</button>
       </div>
@@ -91,11 +130,21 @@ const canDrillIn = computed(() =>
         @select="scanStore.selectNode"
         @drill-down="onDrillDown"
         @hover="onHover"
+        @context-menu="onContextMenu"
       />
       <div class="status-bar">
         <span v-if="hoveredPath" class="status-path">{{ hoveredPath }}</span>
       </div>
     </div>
+    <ContextMenu
+      v-if="contextMenu"
+      :x="contextMenu.x"
+      :y="contextMenu.y"
+      :node="contextMenu.node"
+      @show-in-finder="showInFinder"
+      @open-in-terminal="openInTerminal"
+      @close="contextMenu = null"
+    />
   </div>
 </template>
 
@@ -144,12 +193,22 @@ const canDrillIn = computed(() =>
   min-height: 0;
 }
 
-.viz-toolbar {
+.viz-rootbar {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
   background: #16162a;
+  border-bottom: 1px solid #2a2a4a;
+  flex-shrink: 0;
+}
+
+.viz-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: #1a1a32;
   border-bottom: 1px solid #2a2a4a;
   flex-shrink: 0;
 }
@@ -162,11 +221,20 @@ const canDrillIn = computed(() =>
   white-space: nowrap;
 }
 
-.toolbar-spacer {
+.selection-path {
   flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  color: #a0a0b0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
 }
 
 .toolbar-button {
+  flex-shrink: 0;
+  white-space: nowrap;
   padding: 3px 10px;
   font-size: 12px;
   font-weight: 600;
