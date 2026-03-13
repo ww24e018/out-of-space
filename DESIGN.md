@@ -28,7 +28,7 @@ A lightweight desktop app that scans a local directory and presents an interacti
 
 ### Why This Stack?
 
-- **Electron** — provides filesystem access, native menus, "Show in Finder" / "Open in Terminal" integration, and cross-platform potential. Mature ecosystem for desktop apps.
+- **Electron** — provides filesystem access, native menus, "Reveal in File Manager" / "Open Terminal Here" integration, and cross-platform potential. Mature ecosystem for desktop apps.
 - **Vue 3** — lightweight, approachable, excellent DX with Composition API. Good fit for a single-developer project.
 - **D3** — the gold standard for custom, interactive data visualisation in the browser. Treemap layout is a first-class citizen in D3-hierarchy.
 
@@ -40,8 +40,8 @@ A lightweight desktop app that scans a local directory and presents an interacti
 - Recursive directory scanning with size aggregation
 - Interactive treemap visualisation (zoom, hover, breadcrumb navigation)
 - Context actions on selected items:
-  - "Show in Finder" (macOS `open -R`)
-  - "Open in Terminal" (launch terminal at directory)
+  - "Reveal in File Manager" (cross-platform via Electron `shell.showItemInFolder`)
+  - "Open Terminal Here" (platform-specific: Terminal on macOS, cmd on Windows, xterm on Linux)
 - Sensible loading/progress indication during scan
 
 ### Out of Scope (Explicit)

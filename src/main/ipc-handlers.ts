@@ -31,5 +31,11 @@ export async function handleOpenInTerminal(
   if (!stats.isDirectory()) {
     throw new Error('Path is not a directory')
   }
-  spawn('open', ['-a', 'Terminal', dirPath], { detached: true, stdio: 'ignore' })
+  if (process.platform === 'darwin') {
+    spawn('open', ['-a', 'Terminal', dirPath], { detached: true, stdio: 'ignore' })
+  } else if (process.platform === 'win32') {
+    spawn('cmd.exe', ['/c', 'start', 'cmd.exe'], { cwd: dirPath, detached: true, stdio: 'ignore' })
+  } else {
+    spawn('xterm', [], { cwd: dirPath, detached: true, stdio: 'ignore' })
+  }
 }

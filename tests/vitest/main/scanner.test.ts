@@ -4,6 +4,8 @@ import { join } from 'path'
 import { tmpdir } from 'os'
 import { scanDirectory } from '../../../src/main/scanner'
 
+const isWindows = process.platform === 'win32'
+
 describe('scanDirectory', () => {
   let tmp: string
 
@@ -67,7 +69,7 @@ describe('scanDirectory', () => {
     expect(result.children).toHaveLength(2)
   })
 
-  it('skips unreadable directories gracefully', async () => {
+  it.skipIf(isWindows)('skips unreadable directories gracefully', async () => {
     await mkdir(join(tmp, 'secret'))
     await writeFile(join(tmp, 'secret', 'hidden.txt'), Buffer.alloc(10, 'x'))
     await chmod(join(tmp, 'secret'), 0o000)
@@ -83,7 +85,7 @@ describe('scanDirectory', () => {
     await chmod(join(tmp, 'secret'), 0o755)
   })
 
-  it('skips symlinks', async () => {
+  it.skipIf(isWindows)('skips symlinks', async () => {
     await writeFile(join(tmp, 'real.txt'), Buffer.alloc(40, 'x'))
     await symlink(join(tmp, 'real.txt'), join(tmp, 'link.txt'))
 
