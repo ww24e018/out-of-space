@@ -21,8 +21,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #1a1a2e;
-  color: #e0e0e0;
+  background: var(--c-bg);
+  color: var(--c-text);
 }
 
 #app-shell {
@@ -33,14 +33,14 @@ body {
 
 header {
   padding: 12px 20px;
-  background: #16213e;
-  border-bottom: 1px solid #0f3460;
+  background: var(--c-header-bg);
+  border-bottom: 1px solid var(--c-header-border);
 }
 
 header h1 {
   font-size: 18px;
   font-weight: 600;
-  color: #e94560;
+  color: var(--c-accent);
 }
 
 main {

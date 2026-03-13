@@ -173,7 +173,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
 .welcome p {
   margin-bottom: 16px;
   font-size: 16px;
-  color: #a0a0b0;
+  color: var(--c-text-muted);
 }
 
 .welcome button {
@@ -181,7 +181,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   font-size: 14px;
   font-weight: 600;
   color: #fff;
-  background: #e94560;
+  background: var(--c-accent);
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -189,7 +189,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
 }
 
 .welcome button:hover {
-  background: #c73650;
+  background: var(--c-accent-hover);
 }
 
 .viz-container {
@@ -204,8 +204,8 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
-  background: #16162a;
-  border-bottom: 1px solid #2a2a4a;
+  background: var(--c-surface);
+  border-bottom: 1px solid var(--c-border);
   flex-shrink: 0;
 }
 
@@ -214,14 +214,14 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
-  background: #1a1a32;
-  border-bottom: 1px solid #2a2a4a;
+  background: var(--c-surface-alt);
+  border-bottom: 1px solid var(--c-border);
   flex-shrink: 0;
 }
 
 .viz-path {
   font-size: 12px;
-  color: #a0a0b0;
+  color: var(--c-text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -231,7 +231,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   flex: 1;
   min-width: 0;
   font-size: 12px;
-  color: #a0a0b0;
+  color: var(--c-text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -244,16 +244,16 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   padding: 3px 10px;
   font-size: 12px;
   font-weight: 600;
-  color: #e0e0f0;
-  background: #2a2a4a;
-  border: 1px solid #3a3a5a;
+  color: var(--c-btn-text);
+  background: var(--c-btn-bg);
+  border: 1px solid var(--c-btn-border);
   border-radius: 4px;
   cursor: pointer;
   transition: background 0.15s;
 }
 
 .toolbar-button:hover:not(:disabled) {
-  background: #3a3a5a;
+  background: var(--c-btn-hover);
 }
 
 .toolbar-button:disabled {
@@ -262,27 +262,27 @@ async function openInTerminal(node?: FileNode): Promise<void> {
 }
 
 .toolbar-button--primary {
-  background: #e94560;
-  border-color: #e94560;
+  background: var(--c-accent);
+  border-color: var(--c-accent);
 }
 
 .toolbar-button--primary:hover {
-  background: #c73650;
+  background: var(--c-accent-hover);
 }
 
 .status-bar {
   display: flex;
   align-items: center;
   padding: 4px 12px;
-  background: #16162a;
-  border-top: 1px solid #2a2a4a;
+  background: var(--c-surface);
+  border-top: 1px solid var(--c-border);
   flex-shrink: 0;
   min-height: 24px;
 }
 
 .status-path {
   font-size: 11px;
-  color: #808098;
+  color: var(--c-text-dim);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
