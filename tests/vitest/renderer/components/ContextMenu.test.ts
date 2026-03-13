@@ -19,13 +19,13 @@ const dirNode: FileNode = {
 }
 
 describe('ContextMenu', () => {
-  it('shows only "Show in Finder" for file nodes', () => {
+  it('shows only "Reveal in File Manager" for file nodes', () => {
     const wrapper = mount(ContextMenu, {
       props: { x: 100, y: 100, node: fileNode }
     })
     const items = wrapper.findAll('.context-item')
     expect(items).toHaveLength(1)
-    expect(items[0].text()).toBe('Show in Finder')
+    expect(items[0].text()).toBe('Reveal in File Manager')
   })
 
   it('shows both actions for directory nodes', () => {
@@ -34,8 +34,8 @@ describe('ContextMenu', () => {
     })
     const items = wrapper.findAll('.context-item')
     expect(items).toHaveLength(2)
-    expect(items[0].text()).toBe('Show in Finder')
-    expect(items[1].text()).toBe('Open in Terminal')
+    expect(items[0].text()).toBe('Reveal in File Manager')
+    expect(items[1].text()).toBe('Open Terminal Here')
   })
 
   it('emits showInFinder when clicked', async () => {

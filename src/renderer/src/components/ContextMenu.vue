@@ -49,13 +49,13 @@ onUnmounted(() => {
       :style="{ left: adjustedX + 'px', top: adjustedY + 'px' }"
       @click.stop
     >
-      <button class="context-item" @click="emit('showInFinder')">Show in Finder</button>
+      <button class="context-item" @click="emit('showInFinder')">Reveal in File Manager</button>
       <button
         v-if="node.type === 'directory'"
         class="context-item"
         @click="emit('openInTerminal')"
       >
-        Open in Terminal
+        Open Terminal Here
       </button>
     </div>
   </div>

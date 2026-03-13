@@ -59,6 +59,7 @@ function rescan(): void {
 }
 
 const hoveredPath = ref<string | null>(null)
+const statusHint = ref<string | null>(null)
 
 function onHover(node: FileNode | null): void {
   hoveredPath.value = node?.path ?? null
@@ -119,16 +120,16 @@ async function openInTerminal(node?: FileNode): Promise<void> {
     </div>
     <div v-else-if="viewRoot" class="viz-container">
       <div class="viz-rootbar">
-        <button class="toolbar-button" :disabled="scanStore.isScanning" @click="rescan">Rescan</button>
-        <button v-if="isDrilledIn" class="toolbar-button" @click="goUp">Up</button>
+        <button class="toolbar-button" :disabled="scanStore.isScanning" @click="rescan" @mouseenter="statusHint = 'Rescan the current root directory'" @mouseleave="statusHint = null">Rescan</button>
+        <button v-if="isDrilledIn" class="toolbar-button" @click="goUp" @mouseenter="statusHint = 'Navigate up to the parent directory'" @mouseleave="statusHint = null">Up</button>
         <span class="viz-path">{{ viewRoot.path }}</span>
       </div>
       <div v-if="hasSelection" class="viz-toolbar">
         <span class="selection-path">{{ scanStore.selectedNode!.path }}</span>
-        <button class="toolbar-button" @click="showInFinder()">Finder</button>
-        <button v-if="isSelectedDirectory" class="toolbar-button" @click="openInTerminal()">Terminal</button>
-        <button v-if="canDrillIn" class="toolbar-button" @click="drillIntoSelection">Drill Into</button>
-        <button v-if="canSelectParent" class="toolbar-button" @click="selectParent">Select Parent</button>
+        <button class="toolbar-button" @click="showInFinder()" @mouseenter="statusHint = 'Reveal the selected item in the system file manager'" @mouseleave="statusHint = null">Reveal</button>
+        <button v-if="isSelectedDirectory" class="toolbar-button" @click="openInTerminal()" @mouseenter="statusHint = 'Open a terminal at the selected directory'" @mouseleave="statusHint = null">Terminal</button>
+        <button v-if="canDrillIn" class="toolbar-button" @click="drillIntoSelection" @mouseenter="statusHint = 'Drill into the selected directory'" @mouseleave="statusHint = null">Drill Into</button>
+        <button v-if="canSelectParent" class="toolbar-button" @click="selectParent" @mouseenter="statusHint = 'Select the parent of the current selection'" @mouseleave="statusHint = null">Select Parent</button>
       </div>
       <TreemapView
         :data="viewRoot"
@@ -139,7 +140,8 @@ async function openInTerminal(node?: FileNode): Promise<void> {
         @context-menu="onContextMenu"
       />
       <div class="status-bar">
-        <span v-if="hoveredPath" class="status-path">{{ hoveredPath }}</span>
+        <span v-if="statusHint" class="status-hint">{{ statusHint }}</span>
+        <span v-else-if="hoveredPath" class="status-path">{{ hoveredPath }}</span>
       </div>
     </div>
     <ContextMenu
@@ -288,5 +290,10 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.status-hint {
+  font-size: 11px;
+  color: var(--c-text);
 }
 </style>
