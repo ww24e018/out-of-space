@@ -17,7 +17,7 @@ const containerRef = ref<HTMLDivElement | null>(null)
 const width = ref(0)
 const height = ref(0)
 
-const tooltip = ref<{ x: number; y: number; name: string; size: string } | null>(null)
+const tooltip = ref<{ x: number; y: number; name: string; size: string; type: string } | null>(null)
 
 const visibleNodes = computed(() =>
   computeTreemapLayout(props.data, width.value, height.value).map((node, index) => ({
@@ -63,7 +63,7 @@ function onNodeEnter(event: MouseEvent, node: LayoutNode): void {
   const rect = containerRef.value?.getBoundingClientRect()
   if (!rect) return
   const pos = clampTooltip(event.clientX - rect.left, event.clientY - rect.top)
-  tooltip.value = { ...pos, name: node.data.name, size: formatBytes(node.data.size) }
+  tooltip.value = { ...pos, name: node.data.name, size: formatBytes(node.data.size), type: node.data.type }
   emit('hover', node.data)
 }
 
@@ -147,7 +147,7 @@ watch(() => props.data, updateSize)
     </svg>
     <div v-if="tooltip" class="treemap-tooltip" :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }">
       <strong>{{ tooltip.name }}</strong>
-      <span>{{ tooltip.size }}</span>
+      <span>{{ tooltip.type === 'directory' ? 'Directory' : 'File' }} — {{ tooltip.size }}</span>
     </div>
   </div>
 </template>
