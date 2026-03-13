@@ -70,8 +70,8 @@ A lightweight desktop app that scans a local directory and presents an interacti
 
 ## Resolved Decisions (Step 4)
 
-- **Colour scheme:** Extension-based category mapping (~8 buckets: code, images, documents, archives, media, config, data, other) with a curated palette matching the dark theme. Directories use depth-based muted shades. Implemented in `colorScale.ts`, reusable across visualisation modes.
-- **Theming:** UI chrome colours (backgrounds, borders, text, buttons, overlays) are defined as CSS custom properties in `src/renderer/src/assets/theme.css`. Dark and light palettes auto-switch via `prefers-color-scheme`. Visualisation fill colours (from `colorScale.ts`) are intentionally independent of the light/dark mode — they are a separate concern.
+- **Colour scheme:** Extension-based category mapping (~8 buckets: code, images, documents, archives, media, config, data, other). Directories use depth-based muted shades. Palette definitions live in `palettes.ts`; `colorScale.ts` accepts a `ColorPalette` parameter and is reusable across visualisation modes. Users can switch palettes (Solarized default, Legacy) via a dropdown in the header; state is managed by the `palette` Pinia store.
+- **Theming:** UI chrome colours (backgrounds, borders, text, buttons, overlays) are defined as CSS custom properties in `src/renderer/src/assets/theme.css`. Dark and light palettes auto-switch via `prefers-color-scheme`. Visualisation fill colours (from `palettes.ts` / `colorScale.ts`) are intentionally independent of the light/dark mode — they are a separate concern.
 - **D3 integration pattern:** D3 computes layout only (`d3.hierarchy` + `d3.treemap`); Vue owns the DOM via `v-for` over positioned nodes in SVG. No `d3.select()` DOM manipulation.
 - **Tooltip approach:** Positioned div overlay (not SVG `<title>`) for better styling control.
 

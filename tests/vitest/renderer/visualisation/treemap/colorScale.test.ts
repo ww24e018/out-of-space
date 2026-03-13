@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { hierarchy, treemap } from 'd3'
 import { colorForNode } from '../../../../../src/renderer/src/visualisation/treemap/colorScale'
+import { legacyPalette, solarizedPalette } from '../../../../../src/renderer/src/visualisation/palettes'
 import type { FileNode } from '../../../../../src/shared/types'
 import type { LayoutNode } from '../../../../../src/renderer/src/visualisation/treemap/layout'
 
@@ -16,17 +17,17 @@ function makeLayoutNode(data: FileNode, depth = 0): LayoutNode {
 describe('colorForNode', () => {
   it('returns a code colour for .ts files', () => {
     const node = makeLayoutNode({ name: 'index.ts', path: '/index.ts', size: 100, type: 'file' })
-    expect(colorForNode(node)).toBe('#e94560')
+    expect(colorForNode(node, legacyPalette)).toBe('#e94560')
   })
 
   it('returns an image colour for .png files', () => {
     const node = makeLayoutNode({ name: 'logo.png', path: '/logo.png', size: 100, type: 'file' })
-    expect(colorForNode(node)).toBe('#f5a623')
+    expect(colorForNode(node, legacyPalette)).toBe('#f5a623')
   })
 
   it('returns fallback colour for unknown extensions', () => {
     const node = makeLayoutNode({ name: 'data.xyz', path: '/data.xyz', size: 100, type: 'file' })
-    expect(colorForNode(node)).toBe('#6b7280')
+    expect(colorForNode(node, legacyPalette)).toBe('#6b7280')
   })
 
   it('returns a directory colour for directories', () => {
@@ -35,7 +36,7 @@ describe('colorForNode', () => {
       children: [{ name: 'a.ts', path: '/src/a.ts', size: 100, type: 'file' }]
     }
     const node = makeLayoutNode(dir)
-    const colour = colorForNode(node)
+    const colour = colorForNode(node, legacyPalette)
     expect(['#2a2a4a', '#33335a', '#3d3d6a']).toContain(colour)
   })
 
@@ -46,6 +47,22 @@ describe('colorForNode', () => {
       children: [{ name: 'a.ts', path: '/src/a.ts', size: 100, type: 'file' }]
     }
     const dirNode = makeLayoutNode(dir)
-    expect(colorForNode(dirNode)).not.toBe(colorForNode(file))
+    expect(colorForNode(dirNode, legacyPalette)).not.toBe(colorForNode(file, legacyPalette))
+  })
+
+  it('solarized palette returns different colours than default', () => {
+    const node = makeLayoutNode({ name: 'index.ts', path: '/index.ts', size: 100, type: 'file' })
+    expect(colorForNode(node, solarizedPalette)).toBe('#268bd2')
+    expect(colorForNode(node, solarizedPalette)).not.toBe(colorForNode(node, legacyPalette))
+  })
+
+  it('solarized palette returns correct directory colours', () => {
+    const dir: FileNode = {
+      name: 'src', path: '/src', size: 100, type: 'directory',
+      children: [{ name: 'a.ts', path: '/src/a.ts', size: 100, type: 'file' }]
+    }
+    const node = makeLayoutNode(dir)
+    const colour = colorForNode(node, solarizedPalette)
+    expect(['#073642', '#0a4050', '#0d4d5e']).toContain(colour)
   })
 })
