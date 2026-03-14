@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, toRaw } from 'vue'
 import type { FileNode } from '@shared/types'
+import { sortTreeBySize, buildNavMaps } from '@/utils/tree'
+import type { NavMaps } from '@/utils/tree'
+
+let navMaps: NavMaps | null = null
 
 export const useScanStore = defineStore('scan', () => {
   const rootNode = ref<FileNode | null>(null)
@@ -18,7 +22,10 @@ export const useScanStore = defineStore('scan', () => {
     isScanning.value = true
     error.value = null
     try {
-      rootNode.value = await window.api.scanFolder(folderPath)
+      const tree = await window.api.scanFolder(folderPath)
+      sortTreeBySize(tree)
+      navMaps = buildNavMaps(tree)
+      rootNode.value = tree
     } catch (e) {
       error.value = e instanceof Error ? e.message : String(e)
     } finally {
@@ -30,5 +37,34 @@ export const useScanStore = defineStore('scan', () => {
     selectedNode.value = node
   }
 
-  return { rootNode, isScanning, selectedNode, error, selectAndScan, scan, selectNode }
+  function parentOf(node: FileNode): FileNode | null {
+    return navMaps?.parent.get(toRaw(node)) ?? null
+  }
+
+  function nextSiblingOf(node: FileNode): FileNode | null {
+    return navMaps?.nextSibling.get(toRaw(node)) ?? null
+  }
+
+  function prevSiblingOf(node: FileNode): FileNode | null {
+    return navMaps?.prevSibling.get(toRaw(node)) ?? null
+  }
+
+  /** @internal Test helper — inject nav maps for trees not created via scan() */
+  function _setNavMaps(maps: NavMaps | null): void {
+    navMaps = maps
+  }
+
+  return {
+    rootNode,
+    isScanning,
+    selectedNode,
+    error,
+    selectAndScan,
+    scan,
+    selectNode,
+    parentOf,
+    nextSiblingOf,
+    prevSiblingOf,
+    _setNavMaps
+  }
 })

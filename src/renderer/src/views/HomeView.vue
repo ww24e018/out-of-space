@@ -3,10 +3,17 @@ import { ref, computed, watch } from 'vue'
 import { useScanStore } from '@/stores/scan'
 import TreemapView from '@/visualisation/treemap/TreemapView.vue'
 import ContextMenu from '@/components/ContextMenu.vue'
+import { useKeyboardNavigation } from '@/composables/useKeyboardNavigation'
 import type { FileNode } from '@shared/types'
 
 const scanStore = useScanStore()
 const viewRoot = ref<FileNode | null>(null)
+
+useKeyboardNavigation({
+  viewRoot,
+  onDrillDown: drillIntoSelection,
+  onDrillUp: goUp
+})
 
 watch(
   () => scanStore.rootNode,
@@ -29,28 +36,14 @@ function drillIntoSelection(): void {
 
 function goUp(): void {
   if (!viewRoot.value || !scanStore.rootNode) return
-  const parent = findParent(scanStore.rootNode, viewRoot.value.path)
+  const parent = scanStore.parentOf(viewRoot.value)
   viewRoot.value = parent ?? scanStore.rootNode
 }
 
 function selectParent(): void {
   if (!scanStore.selectedNode || !scanStore.rootNode) return
-  const parent = findParent(scanStore.rootNode, scanStore.selectedNode.path)
+  const parent = scanStore.parentOf(scanStore.selectedNode)
   if (parent) scanStore.selectNode(parent)
-}
-
-// DFS to locate the parent of targetPath — O(n) worst case over the full tree.
-// Acceptable for Phase 1 (typical trees < 50k nodes, sub-10ms). If this becomes
-// a bottleneck, consider storing parent refs on FileNode or tracking a breadcrumb
-// path during navigation.
-function findParent(node: FileNode, targetPath: string): FileNode | null {
-  if (!node.children) return null
-  for (const child of node.children) {
-    if (child.path === targetPath) return node
-    const found = findParent(child, targetPath)
-    if (found) return found
-  }
-  return null
 }
 
 function rescan(): void {
@@ -124,9 +117,10 @@ async function openInTerminal(node?: FileNode): Promise<void> {
         <button v-if="isDrilledIn" class="toolbar-button" @click="goUp" @mouseenter="statusHint = 'Navigate up to the parent directory'" @mouseleave="statusHint = null">Up</button>
         <span class="viz-path">{{ viewRoot.path }}</span>
       </div>
-      <div v-if="hasSelection" class="viz-toolbar">
-        <span class="selection-path">{{ scanStore.selectedNode!.path }}</span>
-        <button class="toolbar-button" @click="showInFinder()" @mouseenter="statusHint = 'Reveal the selected item in the system file manager'" @mouseleave="statusHint = null">Reveal</button>
+      <div class="viz-toolbar">
+        <span v-if="hasSelection" class="selection-path">{{ scanStore.selectedNode!.path }}</span>
+        <span v-else class="selection-path selection-path--empty">No selection</span>
+        <button class="toolbar-button" :disabled="!hasSelection" @click="showInFinder()" @mouseenter="statusHint = 'Reveal the selected item in the system file manager'" @mouseleave="statusHint = null">Reveal</button>
         <button v-if="isSelectedDirectory" class="toolbar-button" @click="openInTerminal()" @mouseenter="statusHint = 'Open a terminal at the selected directory'" @mouseleave="statusHint = null">Terminal</button>
         <button v-if="canDrillIn" class="toolbar-button" @click="drillIntoSelection" @mouseenter="statusHint = 'Drill into the selected directory'" @mouseleave="statusHint = null">Drill Into</button>
         <button v-if="canSelectParent" class="toolbar-button" @click="selectParent" @mouseenter="statusHint = 'Select the parent of the current selection'" @mouseleave="statusHint = null">Select Parent</button>
@@ -141,6 +135,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
       />
       <div class="status-bar">
         <span v-if="statusHint" class="status-hint">{{ statusHint }}</span>
+        <span v-else-if="contextMenu" class="status-path">{{ contextMenu.node.path }}</span>
         <span v-else-if="hoveredPath" class="status-path">{{ hoveredPath }}</span>
       </div>
     </div>
@@ -238,6 +233,11 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   text-overflow: ellipsis;
   white-space: nowrap;
   direction: rtl;
+}
+
+.selection-path--empty {
+  color: var(--c-text-muted);
+  direction: ltr;
 }
 
 .toolbar-button {

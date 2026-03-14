@@ -30,6 +30,7 @@ High-level goals and progress tracking.
 ### Phase 3 — Polish
 - [ ] Progress indicator during scanning
 - [ ] Breadcrumb navigation
+- [x] Keyboard navigation for selection (arrow keys)
 - [x] Colour coding (by file type or directory depth)
 - [x] Handle large trees gracefully (100k+ files)
 - [x] Error handling (permission denied, broken symlinks)
