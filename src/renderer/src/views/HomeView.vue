@@ -136,6 +136,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
       />
       <div class="status-bar">
         <span v-if="statusHint" class="status-hint">{{ statusHint }}</span>
+        <span v-else-if="contextMenu" class="status-path">{{ contextMenu.node.path }}</span>
         <span v-else-if="hoveredPath" class="status-path">{{ hoveredPath }}</span>
       </div>
     </div>
