@@ -22,7 +22,7 @@ export async function handleScanFolder(
     (filesScanned: number, currentPath: string) => {
       event.sender.send(IpcChannels.SCAN_PROGRESS, { filesScanned, currentPath })
     },
-    250
+    10
   )
   return scanDirectory(folderPath, send)
 }
