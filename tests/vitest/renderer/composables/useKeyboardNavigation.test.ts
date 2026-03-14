@@ -68,11 +68,17 @@ describe('useKeyboardNavigation', () => {
     tree = makeTree()
   })
 
-  it('selects viewRoot when no selection and any arrow is pressed', () => {
+  it('selects largest child on ArrowDown when no selection', () => {
     createWrapper(tree)
     expect(store.selectedNode).toBeNull()
     press('ArrowDown')
-    expect(store.selectedNode?.path).toBe('/root')
+    expect(store.selectedNode?.path).toBe('/root/big')
+  })
+
+  it('selects largest child on ArrowRight when no selection', () => {
+    createWrapper(tree)
+    press('ArrowRight')
+    expect(store.selectedNode?.path).toBe('/root/big')
   })
 
   it('selects viewRoot on ArrowUp when no selection', () => {
@@ -87,10 +93,11 @@ describe('useKeyboardNavigation', () => {
     expect(store.selectedNode?.path).toBe('/root')
   })
 
-  it('selects viewRoot on ArrowRight when no selection', () => {
-    createWrapper(tree)
-    press('ArrowRight')
-    expect(store.selectedNode?.path).toBe('/root')
+  it('falls back to viewRoot on ArrowDown when viewRoot has no children', () => {
+    const leaf: FileNode = { name: 'leaf', path: '/leaf', size: 100, type: 'file' }
+    createWrapper(leaf)
+    press('ArrowDown')
+    expect(store.selectedNode?.path).toBe('/leaf')
   })
 
   describe('ArrowUp', () => {

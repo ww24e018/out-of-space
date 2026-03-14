@@ -48,7 +48,12 @@ export function useKeyboardNavigation(options: KeyboardNavigationOptions): void 
     if (modifier) return
 
     if (!scanStore.selectedNode) {
-      scanStore.selectNode(options.viewRoot.value)
+      if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+        const children = getSortedChildren(options.viewRoot.value)
+        scanStore.selectNode(children.length > 0 ? children[0] : options.viewRoot.value)
+      } else {
+        scanStore.selectNode(options.viewRoot.value)
+      }
       return
     }
 
