@@ -1,3 +1,9 @@
+export interface ThrottledFn<T extends (...args: never[]) => void> {
+  (...args: Parameters<T>): void
+  /** Cancel any pending trailing-edge call */
+  cancel(): void
+}
+
 /**
  * Creates a throttled version of a function that fires at most once per interval.
  *
@@ -5,16 +11,17 @@
  * - Subsequent calls within the interval are suppressed, but the latest args
  *   are saved and forwarded when the interval expires (trailing edge).
  * - This guarantees the final call is never lost.
+ * - Call `.cancel()` to clear any pending trailing-edge timer.
  */
 export function makeThrottled<T extends (...args: never[]) => void>(
   fn: T,
   intervalMs: number
-): (...args: Parameters<T>) => void {
+): ThrottledFn<T> {
   let lastCallTime = 0
   let timer: ReturnType<typeof setTimeout> | null = null
   let pendingArgs: Parameters<T> | null = null
 
-  return (...args: Parameters<T>): void => {
+  const throttled = (...args: Parameters<T>): void => {
     const now = Date.now()
     const elapsed = now - lastCallTime
 
@@ -42,4 +49,14 @@ export function makeThrottled<T extends (...args: never[]) => void>(
       }
     }
   }
+
+  throttled.cancel = (): void => {
+    if (timer !== null) {
+      clearTimeout(timer)
+      timer = null
+    }
+    pendingArgs = null
+  }
+
+  return throttled
 }

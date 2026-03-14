@@ -88,4 +88,29 @@ describe('makeThrottled', () => {
     expect(fn).toHaveBeenCalledTimes(4)
     expect(fn.mock.calls.map((c) => c[0])).toEqual([1, 3, 4, 5])
   })
+
+  it('cancel prevents pending trailing-edge call', () => {
+    const fn = vi.fn()
+    const throttled = makeThrottled(fn, 100)
+
+    throttled(1)
+    throttled(2) // suppressed, pending trailing edge
+
+    throttled.cancel()
+    vi.advanceTimersByTime(100)
+
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(fn).toHaveBeenCalledWith(1)
+  })
+
+  it('cancel is safe to call when nothing is pending', () => {
+    const fn = vi.fn()
+    const throttled = makeThrottled(fn, 100)
+
+    throttled.cancel() // no-op
+    throttled(1)
+    throttled.cancel() // no pending trailing edge (first call fired immediately)
+
+    expect(fn).toHaveBeenCalledTimes(1)
+  })
 })

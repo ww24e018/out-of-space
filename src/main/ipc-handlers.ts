@@ -20,11 +20,17 @@ export async function handleScanFolder(
 ): Promise<FileNode> {
   const send = makeThrottled(
     (filesScanned: number, currentPath: string) => {
-      event.sender.send(IpcChannels.SCAN_PROGRESS, { filesScanned, currentPath })
+      if (!event.sender.isDestroyed()) {
+        event.sender.send(IpcChannels.SCAN_PROGRESS, { filesScanned, currentPath })
+      }
     },
     10
   )
-  return scanDirectory(folderPath, send)
+  try {
+    return await scanDirectory(folderPath, send)
+  } finally {
+    send.cancel()
+  }
 }
 
 export function handleShowInFinder(_event: IpcMainInvokeEvent, filePath: string): void {
