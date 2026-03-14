@@ -10,7 +10,7 @@ Built with Electron, Vue 3, and D3.
 
 ## Status
 
-Work in progress — directory scanning and interactive treemap visualisation are functional. Context actions and packaging remain.
+Work in progress — directory scanning, interactive treemap visualisation, and context actions are functional. Packaging remains.
 
 ## Getting Started
 
@@ -59,7 +59,7 @@ src/
 - Hover tooltips with file name and human-readable size
 - Status bar showing full path of hovered item
 - Switchable visualisation modes (treemap implemented, sunburst planned)
-- "Show in Finder" and "Open in Terminal" context actions (planned)
+- "Show in Finder" and "Open in Terminal" context actions
 - macOS-first design
 
 ## License
