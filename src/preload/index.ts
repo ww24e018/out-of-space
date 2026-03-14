@@ -6,7 +6,13 @@ const api: ElectronApi = {
   selectFolder: () => ipcRenderer.invoke(IpcChannels.SELECT_FOLDER),
   scanFolder: (folderPath: string) => ipcRenderer.invoke(IpcChannels.SCAN_FOLDER, folderPath),
   showInFinder: (filePath: string) => ipcRenderer.invoke(IpcChannels.SHOW_IN_FINDER, filePath),
-  openInTerminal: (dirPath: string) => ipcRenderer.invoke(IpcChannels.OPEN_IN_TERMINAL, dirPath)
+  openInTerminal: (dirPath: string) => ipcRenderer.invoke(IpcChannels.OPEN_IN_TERMINAL, dirPath),
+  onScanProgress: (callback) => {
+    ipcRenderer.on(IpcChannels.SCAN_PROGRESS, (_event, progress) => callback(progress))
+  },
+  offScanProgress: () => {
+    ipcRenderer.removeAllListeners(IpcChannels.SCAN_PROGRESS)
+  }
 }
 
 // Use `contextBridge` to expose Electron APIs to the renderer

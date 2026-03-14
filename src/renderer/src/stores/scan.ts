@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, toRaw } from 'vue'
-import type { FileNode } from '@shared/types'
+import type { FileNode, ScanProgress } from '@shared/types'
 import { sortTreeBySize, buildNavMaps } from '@/utils/tree'
 import type { NavMaps } from '@/utils/tree'
 
@@ -11,6 +11,7 @@ export const useScanStore = defineStore('scan', () => {
   const isScanning = ref(false)
   const selectedNode = ref<FileNode | null>(null)
   const error = ref<string | null>(null)
+  const scanProgress = ref<ScanProgress | null>(null)
 
   async function selectAndScan(): Promise<void> {
     const folderPath = await window.api.selectFolder()
@@ -21,6 +22,12 @@ export const useScanStore = defineStore('scan', () => {
   async function scan(folderPath: string): Promise<void> {
     isScanning.value = true
     error.value = null
+    scanProgress.value = null
+
+    window.api.onScanProgress((progress) => {
+      scanProgress.value = progress
+    })
+
     try {
       const tree = await window.api.scanFolder(folderPath)
       sortTreeBySize(tree)
@@ -29,6 +36,8 @@ export const useScanStore = defineStore('scan', () => {
     } catch (e) {
       error.value = e instanceof Error ? e.message : String(e)
     } finally {
+      window.api.offScanProgress()
+      scanProgress.value = null
       isScanning.value = false
     }
   }
@@ -59,6 +68,7 @@ export const useScanStore = defineStore('scan', () => {
     isScanning,
     selectedNode,
     error,
+    scanProgress,
     selectAndScan,
     scan,
     selectNode,

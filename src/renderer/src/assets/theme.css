@@ -31,6 +31,7 @@
   --c-overlay-bg: rgba(15, 17, 23, 0.95);
   --c-overlay-border: #4a5168;
   --c-overlay-hover: rgba(232, 234, 240, 0.1);
+  --c-scan-overlay-bg: rgba(15, 17, 23, 0.75);
 }
 
 @media (prefers-color-scheme: light) {
@@ -61,5 +62,6 @@
     --c-overlay-bg: rgba(255, 255, 255, 0.95);
     --c-overlay-border: #d1d5db;
     --c-overlay-hover: rgba(17, 17, 17, 0.06);
+    --c-scan-overlay-bg: rgba(250, 250, 250, 0.75);
   }
 }
