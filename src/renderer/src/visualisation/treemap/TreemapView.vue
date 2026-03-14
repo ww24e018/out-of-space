@@ -121,7 +121,7 @@ watch(() => props.data, updateSize)
 </script>
 
 <template>
-  <div ref="containerRef" class="treemap-container">
+  <div ref="containerRef" class="treemap-container" :style="{ backgroundColor: paletteStore.currentPalette.background, '--palette-bg': paletteStore.currentPalette.background }">
     <svg :width="width" :height="height" class="treemap-svg">
       <g
         v-for="{ node, clipId } in visibleNodes"
@@ -180,7 +180,7 @@ watch(() => props.data, updateSize)
 }
 
 .treemap-node rect {
-  stroke: var(--c-bg);
+  stroke: var(--palette-bg, var(--c-bg));
   stroke-width: 1;
   transition: opacity 0.15s;
 }

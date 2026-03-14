@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { VisualisationProps } from '../types'
+import { usePaletteStore } from '../../stores/palette'
 
 defineProps<VisualisationProps>()
 defineEmits<{
@@ -7,10 +8,12 @@ defineEmits<{
   drillDown: [node: VisualisationProps['data']]
   hover: [node: VisualisationProps['data'] | null]
 }>()
+
+const paletteStore = usePaletteStore()
 </script>
 
 <template>
-  <div class="sunburst-container">
+  <div class="sunburst-container" :style="{ backgroundColor: paletteStore.currentPalette.background }">
     <p>Sunburst visualisation — {{ data.name }} ({{ data.children?.length ?? 0 }} children)</p>
     <!-- D3 sunburst will be rendered here -->
   </div>
