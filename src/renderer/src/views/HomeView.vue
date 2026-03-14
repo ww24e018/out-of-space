@@ -10,7 +10,11 @@ import type { FileNode } from '@shared/types'
 const scanStore = useScanStore()
 const viewRoot = ref<FileNode | null>(null)
 
-useKeyboardNavigation(viewRoot)
+useKeyboardNavigation({
+  viewRoot,
+  onDrillDown: drillIntoSelection,
+  onDrillUp: goUp
+})
 
 watch(
   () => scanStore.rootNode,
@@ -114,9 +118,10 @@ async function openInTerminal(node?: FileNode): Promise<void> {
         <button v-if="isDrilledIn" class="toolbar-button" @click="goUp" @mouseenter="statusHint = 'Navigate up to the parent directory'" @mouseleave="statusHint = null">Up</button>
         <span class="viz-path">{{ viewRoot.path }}</span>
       </div>
-      <div v-if="hasSelection" class="viz-toolbar">
-        <span class="selection-path">{{ scanStore.selectedNode!.path }}</span>
-        <button class="toolbar-button" @click="showInFinder()" @mouseenter="statusHint = 'Reveal the selected item in the system file manager'" @mouseleave="statusHint = null">Reveal</button>
+      <div class="viz-toolbar">
+        <span v-if="hasSelection" class="selection-path">{{ scanStore.selectedNode!.path }}</span>
+        <span v-else class="selection-path selection-path--empty">No selection</span>
+        <button class="toolbar-button" :disabled="!hasSelection" @click="showInFinder()" @mouseenter="statusHint = 'Reveal the selected item in the system file manager'" @mouseleave="statusHint = null">Reveal</button>
         <button v-if="isSelectedDirectory" class="toolbar-button" @click="openInTerminal()" @mouseenter="statusHint = 'Open a terminal at the selected directory'" @mouseleave="statusHint = null">Terminal</button>
         <button v-if="canDrillIn" class="toolbar-button" @click="drillIntoSelection" @mouseenter="statusHint = 'Drill into the selected directory'" @mouseleave="statusHint = null">Drill Into</button>
         <button v-if="canSelectParent" class="toolbar-button" @click="selectParent" @mouseenter="statusHint = 'Select the parent of the current selection'" @mouseleave="statusHint = null">Select Parent</button>
@@ -228,6 +233,11 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   text-overflow: ellipsis;
   white-space: nowrap;
   direction: rtl;
+}
+
+.selection-path--empty {
+  color: var(--c-text-muted);
+  direction: ltr;
 }
 
 .toolbar-button {

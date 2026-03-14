@@ -3,12 +3,18 @@ import { useScanStore } from '@/stores/scan'
 import { findParent } from '@/utils/tree'
 import type { FileNode } from '@shared/types'
 
+export interface KeyboardNavigationOptions {
+  viewRoot: Ref<FileNode | null>
+  onDrillDown?: () => void
+  onDrillUp?: () => void
+}
+
 function getSortedChildren(node: FileNode): FileNode[] {
   if (!node.children || node.children.length === 0) return []
   return [...node.children].sort((a, b) => b.size - a.size)
 }
 
-export function useKeyboardNavigation(viewRoot: Ref<FileNode | null>): void {
+export function useKeyboardNavigation(options: KeyboardNavigationOptions): void {
   const scanStore = useScanStore()
 
   function onKeydown(e: KeyboardEvent): void {
@@ -16,7 +22,7 @@ export function useKeyboardNavigation(viewRoot: Ref<FileNode | null>): void {
     if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
     if ((document.activeElement as HTMLElement)?.isContentEditable) return
 
-    if (!viewRoot.value) return
+    if (!options.viewRoot.value) return
 
     const isArrow =
       e.key === 'ArrowUp' ||
@@ -28,8 +34,21 @@ export function useKeyboardNavigation(viewRoot: Ref<FileNode | null>): void {
 
     e.preventDefault()
 
+    const modifier = e.metaKey || e.ctrlKey
+
+    if (modifier && e.key === 'ArrowUp') {
+      options.onDrillUp?.()
+      return
+    }
+    if (modifier && e.key === 'ArrowDown') {
+      options.onDrillDown?.()
+      return
+    }
+
+    if (modifier) return
+
     if (!scanStore.selectedNode) {
-      scanStore.selectNode(viewRoot.value)
+      scanStore.selectNode(options.viewRoot.value)
       return
     }
 
@@ -51,8 +70,8 @@ export function useKeyboardNavigation(viewRoot: Ref<FileNode | null>): void {
 
   function navigateUp(): void {
     const selected = scanStore.selectedNode!
-    if (selected.path === viewRoot.value!.path) return
-    const parent = findParent(viewRoot.value!, selected.path)
+    if (selected.path === options.viewRoot.value!.path) return
+    const parent = findParent(options.viewRoot.value!, selected.path)
     if (parent) scanStore.selectNode(parent)
   }
 
@@ -66,8 +85,8 @@ export function useKeyboardNavigation(viewRoot: Ref<FileNode | null>): void {
 
   function navigateSibling(direction: -1 | 1): void {
     const selected = scanStore.selectedNode!
-    if (selected.path === viewRoot.value!.path) return
-    const parent = findParent(viewRoot.value!, selected.path)
+    if (selected.path === options.viewRoot.value!.path) return
+    const parent = findParent(options.viewRoot.value!, selected.path)
     if (!parent) return
     const siblings = getSortedChildren(parent)
     const index = siblings.findIndex((s) => s.path === selected.path)

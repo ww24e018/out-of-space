@@ -1,17 +1,22 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { setActivePinia, createPinia } from 'pinia'
 import { defineComponent, ref } from 'vue'
 import { useScanStore } from '@/stores/scan'
 import { useKeyboardNavigation } from '@/composables/useKeyboardNavigation'
+import type { KeyboardNavigationOptions } from '@/composables/useKeyboardNavigation'
 import type { FileNode } from '@shared/types'
 
 // Minimal wrapper component that activates the composable
-function createWrapper(viewRootNode: FileNode | null) {
+function createWrapper(
+  viewRootNode: FileNode | null,
+  callbacks?: { onDrillDown?: () => void; onDrillUp?: () => void }
+) {
   const viewRoot = ref<FileNode | null>(viewRootNode)
+  const opts: KeyboardNavigationOptions = { viewRoot, ...callbacks }
   const Wrapper = defineComponent({
     setup() {
-      useKeyboardNavigation(viewRoot)
+      useKeyboardNavigation(opts)
       return () => null
     }
   })
@@ -19,8 +24,8 @@ function createWrapper(viewRootNode: FileNode | null) {
   return { wrapper, viewRoot }
 }
 
-function press(key: string): void {
-  window.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true }))
+function press(key: string, modifiers?: { metaKey?: boolean; ctrlKey?: boolean }): void {
+  window.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, ...modifiers }))
 }
 
 // Test tree:
@@ -178,6 +183,58 @@ describe('useKeyboardNavigation', () => {
       createWrapper(tree)
       press('ArrowLeft')
       expect(store.selectedNode?.path).toBe('/root/small') // wraps to last (30)
+    })
+  })
+
+  describe('Ctrl/Cmd + arrow (drill)', () => {
+    it('calls onDrillUp on Ctrl+ArrowUp', () => {
+      const onDrillUp = vi.fn()
+      store.selectNode(tree.children![0])
+      createWrapper(tree, { onDrillUp })
+      press('ArrowUp', { ctrlKey: true })
+      expect(onDrillUp).toHaveBeenCalledOnce()
+      // Should NOT change selection (drill, not navigate)
+      expect(store.selectedNode?.path).toBe('/root/big')
+    })
+
+    it('calls onDrillDown on Meta+ArrowDown', () => {
+      const onDrillDown = vi.fn()
+      store.selectNode(tree.children![0])
+      createWrapper(tree, { onDrillDown })
+      press('ArrowDown', { metaKey: true })
+      expect(onDrillDown).toHaveBeenCalledOnce()
+      expect(store.selectedNode?.path).toBe('/root/big')
+    })
+
+    it('does not navigate on Ctrl+ArrowUp', () => {
+      store.selectNode(tree.children![0].children![0]) // big-child-a
+      createWrapper(tree)
+      press('ArrowUp', { ctrlKey: true })
+      // Without callback, it's a no-op — selection should NOT change
+      expect(store.selectedNode?.path).toBe('/root/big/big-child-a')
+    })
+
+    it('does not navigate on Ctrl+ArrowDown', () => {
+      store.selectNode(tree) // root has children
+      createWrapper(tree)
+      press('ArrowDown', { ctrlKey: true })
+      // Without callback, no-op — should NOT select largest child
+      expect(store.selectedNode?.path).toBe('/root')
+    })
+
+    it('ignores Ctrl+ArrowLeft (no drill action)', () => {
+      store.selectNode(tree.children![0]) // big (200)
+      createWrapper(tree)
+      press('ArrowLeft', { ctrlKey: true })
+      // Modifier + Left/Right should not navigate siblings
+      expect(store.selectedNode?.path).toBe('/root/big')
+    })
+
+    it('ignores Ctrl+ArrowRight (no drill action)', () => {
+      store.selectNode(tree.children![0]) // big (200)
+      createWrapper(tree)
+      press('ArrowRight', { ctrlKey: true })
+      expect(store.selectedNode?.path).toBe('/root/big')
     })
   })
 
