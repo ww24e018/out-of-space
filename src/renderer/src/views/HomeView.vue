@@ -107,9 +107,13 @@ async function openInTerminal(node?: FileNode): Promise<void> {
 
 <template>
   <div class="home">
-    <div v-if="!scanStore.rootNode" class="welcome">
+    <div v-if="!scanStore.rootNode && !scanStore.isScanning" class="welcome">
       <p>Select a folder to visualise its disk usage.</p>
       <button @click="scanStore.selectAndScan()">Open Folder</button>
+    </div>
+    <div v-else-if="scanStore.isScanning && !scanStore.rootNode" class="welcome">
+      <p class="scanning-text">Scanning…</p>
+      <p v-if="scanStore.scanProgress" class="scanning-count">{{ scanStore.scanProgress.filesScanned.toLocaleString() }} files found</p>
     </div>
     <div v-else-if="viewRoot" class="viz-container">
       <div class="viz-rootbar">
@@ -125,14 +129,20 @@ async function openInTerminal(node?: FileNode): Promise<void> {
         <button v-if="canDrillIn" class="toolbar-button" @click="drillIntoSelection" @mouseenter="statusHint = 'Drill into the selected directory'" @mouseleave="statusHint = null">Drill Into</button>
         <button v-if="canSelectParent" class="toolbar-button" @click="selectParent" @mouseenter="statusHint = 'Select the parent of the current selection'" @mouseleave="statusHint = null">Select Parent</button>
       </div>
-      <TreemapView
-        :data="viewRoot"
-        :selected-node="scanStore.selectedNode"
-        @select="scanStore.selectNode"
-        @drill-down="onDrillDown"
-        @hover="onHover"
-        @context-menu="onContextMenu"
-      />
+      <div class="viz-area">
+        <TreemapView
+          :data="viewRoot"
+          :selected-node="scanStore.selectedNode"
+          @select="scanStore.selectNode"
+          @drill-down="onDrillDown"
+          @hover="onHover"
+          @context-menu="onContextMenu"
+        />
+        <div v-if="scanStore.isScanning" class="scan-overlay">
+          <p class="scanning-text">Scanning…</p>
+          <p v-if="scanStore.scanProgress" class="scanning-count">{{ scanStore.scanProgress.filesScanned.toLocaleString() }} files found</p>
+        </div>
+      </div>
       <div class="status-bar">
         <span v-if="statusHint" class="status-hint">{{ statusHint }}</span>
         <span v-else-if="contextMenu" class="status-path">{{ contextMenu.node.path }}</span>
@@ -295,5 +305,33 @@ async function openInTerminal(node?: FileNode): Promise<void> {
 .status-hint {
   font-size: 11px;
   color: var(--c-text);
+}
+
+.viz-area {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.scan-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-scan-overlay-bg);
+  z-index: 10;
+}
+
+.scanning-text {
+  font-size: 16px;
+  color: var(--c-text-muted);
+}
+
+.scanning-count {
+  font-size: 14px;
+  color: var(--c-text-muted);
+  margin-top: 8px;
 }
 </style>

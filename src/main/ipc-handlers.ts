@@ -2,7 +2,9 @@ import { BrowserWindow, dialog, IpcMainInvokeEvent, shell } from 'electron'
 import { spawn } from 'child_process'
 import { stat } from 'fs/promises'
 import { FileNode } from '@shared/types'
+import { IpcChannels } from '@shared/ipc-channels'
 import { scanDirectory } from './scanner'
+import { makeThrottled } from './throttle'
 
 export async function handleSelectFolder(): Promise<string | null> {
   const window = BrowserWindow.getFocusedWindow()
@@ -13,10 +15,16 @@ export async function handleSelectFolder(): Promise<string | null> {
 }
 
 export async function handleScanFolder(
-  _event: IpcMainInvokeEvent,
+  event: IpcMainInvokeEvent,
   folderPath: string
 ): Promise<FileNode> {
-  return scanDirectory(folderPath)
+  const send = makeThrottled(
+    (filesScanned: number) => {
+      event.sender.send(IpcChannels.SCAN_PROGRESS, { filesScanned })
+    },
+    250
+  )
+  return scanDirectory(folderPath, send)
 }
 
 export function handleShowInFinder(_event: IpcMainInvokeEvent, filePath: string): void {

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mkdtemp, rm, mkdir, writeFile, symlink, chmod } from 'fs/promises'
 import { join } from 'path'
 import { tmpdir } from 'os'
@@ -83,6 +83,28 @@ describe('scanDirectory', () => {
 
     // Restore permissions so afterEach cleanup works
     await chmod(join(tmp, 'secret'), 0o755)
+  })
+
+  it('calls onProgress with incrementing counts', async () => {
+    await mkdir(join(tmp, 'sub'))
+    await writeFile(join(tmp, 'a.txt'), Buffer.alloc(10, 'x'))
+    await writeFile(join(tmp, 'sub', 'b.txt'), Buffer.alloc(20, 'x'))
+
+    const onProgress = vi.fn()
+    await scanDirectory(tmp, onProgress)
+
+    // Root dir + a.txt + sub dir + b.txt = 4 entries via lstat
+    expect(onProgress).toHaveBeenCalledTimes(4)
+
+    // Each call receives an incrementing count
+    const counts = onProgress.mock.calls.map((c) => c[0])
+    expect(counts).toEqual([1, 2, 3, 4])
+  })
+
+  it('works without onProgress callback', async () => {
+    await writeFile(join(tmp, 'a.txt'), Buffer.alloc(10, 'x'))
+    const result = await scanDirectory(tmp)
+    expect(result.children).toHaveLength(1)
   })
 
   it.skipIf(isWindows)('skips symlinks', async () => {

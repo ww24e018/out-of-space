@@ -7,7 +7,9 @@ const mockApi = {
   selectFolder: vi.fn(),
   scanFolder: vi.fn(),
   showInFinder: vi.fn(),
-  openInTerminal: vi.fn()
+  openInTerminal: vi.fn(),
+  onScanProgress: vi.fn(),
+  offScanProgress: vi.fn()
 }
 
 describe('useScanStore', () => {
@@ -112,6 +114,62 @@ describe('useScanStore', () => {
 
     expect(mockApi.scanFolder).toHaveBeenCalledWith('/Users/test/folder')
     expect(store.rootNode).not.toBeNull()
+  })
+
+  it('registers progress listener during scan and cleans up after', async () => {
+    mockApi.scanFolder.mockResolvedValue({
+      name: 'test',
+      path: '/tmp/test',
+      size: 0,
+      type: 'directory',
+      children: []
+    })
+
+    const store = useScanStore()
+    await store.scan('/tmp/test')
+
+    expect(mockApi.onScanProgress).toHaveBeenCalledTimes(1)
+    expect(mockApi.offScanProgress).toHaveBeenCalledTimes(1)
+  })
+
+  it('updates scanProgress when progress callback is invoked', async () => {
+    let resolvePromise!: (value: FileNode) => void
+    mockApi.scanFolder.mockReturnValue(
+      new Promise<FileNode>((resolve) => {
+        resolvePromise = resolve
+      })
+    )
+    mockApi.onScanProgress.mockImplementation((callback) => {
+      // Simulate a progress update
+      callback({ filesScanned: 42 })
+    })
+
+    const store = useScanStore()
+    const scanPromise = store.scan('/tmp/test')
+
+    expect(store.scanProgress).toEqual({ filesScanned: 42 })
+
+    resolvePromise({
+      name: 'test',
+      path: '/tmp/test',
+      size: 0,
+      type: 'directory',
+      children: []
+    })
+    await scanPromise
+
+    // Cleared after scan completes
+    expect(store.scanProgress).toBeNull()
+  })
+
+  it('cleans up progress listener on scan failure', async () => {
+    mockApi.scanFolder.mockRejectedValue(new Error('fail'))
+
+    const store = useScanStore()
+    await store.scan('/tmp/test')
+
+    expect(mockApi.offScanProgress).toHaveBeenCalledTimes(1)
+    expect(store.scanProgress).toBeNull()
   })
 
   it('sets and clears selectedNode', () => {
