@@ -3,10 +3,14 @@ import { ref, computed, watch } from 'vue'
 import { useScanStore } from '@/stores/scan'
 import TreemapView from '@/visualisation/treemap/TreemapView.vue'
 import ContextMenu from '@/components/ContextMenu.vue'
+import { findParent } from '@/utils/tree'
+import { useKeyboardNavigation } from '@/composables/useKeyboardNavigation'
 import type { FileNode } from '@shared/types'
 
 const scanStore = useScanStore()
 const viewRoot = ref<FileNode | null>(null)
+
+useKeyboardNavigation(viewRoot)
 
 watch(
   () => scanStore.rootNode,
@@ -37,20 +41,6 @@ function selectParent(): void {
   if (!scanStore.selectedNode || !scanStore.rootNode) return
   const parent = findParent(scanStore.rootNode, scanStore.selectedNode.path)
   if (parent) scanStore.selectNode(parent)
-}
-
-// DFS to locate the parent of targetPath — O(n) worst case over the full tree.
-// Acceptable for Phase 1 (typical trees < 50k nodes, sub-10ms). If this becomes
-// a bottleneck, consider storing parent refs on FileNode or tracking a breadcrumb
-// path during navigation.
-function findParent(node: FileNode, targetPath: string): FileNode | null {
-  if (!node.children) return null
-  for (const child of node.children) {
-    if (child.path === targetPath) return node
-    const found = findParent(child, targetPath)
-    if (found) return found
-  }
-  return null
 }
 
 function rescan(): void {
