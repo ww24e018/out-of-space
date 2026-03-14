@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { FileNode } from '@shared/types'
+import { sortTreeBySize } from '@/utils/tree'
 
 export const useScanStore = defineStore('scan', () => {
   const rootNode = ref<FileNode | null>(null)
@@ -18,7 +19,9 @@ export const useScanStore = defineStore('scan', () => {
     isScanning.value = true
     error.value = null
     try {
-      rootNode.value = await window.api.scanFolder(folderPath)
+      const tree = await window.api.scanFolder(folderPath)
+      sortTreeBySize(tree)
+      rootNode.value = tree
     } catch (e) {
       error.value = e instanceof Error ? e.message : String(e)
     } finally {

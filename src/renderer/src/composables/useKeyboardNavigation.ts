@@ -9,11 +9,6 @@ export interface KeyboardNavigationOptions {
   onDrillUp?: () => void
 }
 
-function getSortedChildren(node: FileNode): FileNode[] {
-  if (!node.children || node.children.length === 0) return []
-  return [...node.children].sort((a, b) => b.size - a.size)
-}
-
 export function useKeyboardNavigation(options: KeyboardNavigationOptions): void {
   const scanStore = useScanStore()
 
@@ -49,8 +44,8 @@ export function useKeyboardNavigation(options: KeyboardNavigationOptions): void 
 
     if (!scanStore.selectedNode) {
       if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-        const children = getSortedChildren(options.viewRoot.value)
-        scanStore.selectNode(children.length > 0 ? children[0] : options.viewRoot.value)
+        const children = options.viewRoot.value.children
+        scanStore.selectNode(children?.length ? children[0] : options.viewRoot.value)
       } else {
         scanStore.selectNode(options.viewRoot.value)
       }
@@ -82,8 +77,8 @@ export function useKeyboardNavigation(options: KeyboardNavigationOptions): void 
 
   function navigateDown(): void {
     const selected = scanStore.selectedNode!
-    const children = getSortedChildren(selected)
-    if (children.length > 0) {
+    const children = selected.children
+    if (children?.length) {
       scanStore.selectNode(children[0])
     }
   }
@@ -93,7 +88,7 @@ export function useKeyboardNavigation(options: KeyboardNavigationOptions): void 
     if (selected.path === options.viewRoot.value!.path) return
     const parent = findParent(options.viewRoot.value!, selected.path)
     if (!parent) return
-    const siblings = getSortedChildren(parent)
+    const siblings = parent.children!
     const index = siblings.findIndex((s) => s.path === selected.path)
     if (index === -1) return
     const next = (index + direction + siblings.length) % siblings.length
