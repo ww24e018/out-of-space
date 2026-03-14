@@ -141,13 +141,13 @@ describe('useScanStore', () => {
     )
     mockApi.onScanProgress.mockImplementation((callback) => {
       // Simulate a progress update
-      callback({ filesScanned: 42 })
+      callback({ filesScanned: 42, currentPath: '/tmp/test/foo.txt' })
     })
 
     const store = useScanStore()
     const scanPromise = store.scan('/tmp/test')
 
-    expect(store.scanProgress).toEqual({ filesScanned: 42 })
+    expect(store.scanProgress).toEqual({ filesScanned: 42, currentPath: '/tmp/test/foo.txt' })
 
     resolvePromise({
       name: 'test',

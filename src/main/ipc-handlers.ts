@@ -19,8 +19,8 @@ export async function handleScanFolder(
   folderPath: string
 ): Promise<FileNode> {
   const send = makeThrottled(
-    (filesScanned: number) => {
-      event.sender.send(IpcChannels.SCAN_PROGRESS, { filesScanned })
+    (filesScanned: number, currentPath: string) => {
+      event.sender.send(IpcChannels.SCAN_PROGRESS, { filesScanned, currentPath })
     },
     250
   )

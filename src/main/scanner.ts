@@ -4,14 +4,14 @@ import type { FileNode } from '@shared/types'
 
 export async function scanDirectory(
   rootPath: string,
-  onProgress?: (filesScanned: number) => void
+  onProgress?: (filesScanned: number, currentPath: string) => void
 ): Promise<FileNode> {
   const counter = { count: 0 }
   const stats = await lstat(rootPath)
   const name = rootPath.split('/').pop() || rootPath
 
   counter.count++
-  onProgress?.(counter.count)
+  onProgress?.(counter.count, rootPath)
 
   if (!stats.isDirectory()) {
     return { name, path: rootPath, size: stats.size, type: 'file' }
@@ -26,7 +26,7 @@ export async function scanDirectory(
 async function scanChildren(
   dirPath: string,
   counter: { count: number },
-  onProgress?: (filesScanned: number) => void
+  onProgress?: (filesScanned: number, currentPath: string) => void
 ): Promise<FileNode[]> {
   let entries: string[]
   try {
@@ -46,7 +46,7 @@ async function scanChildren(
       }
 
       counter.count++
-      onProgress?.(counter.count)
+      onProgress?.(counter.count, fullPath)
 
       if (stats.isSymbolicLink()) {
         return null // Skip symlinks to avoid cycles and double-counting

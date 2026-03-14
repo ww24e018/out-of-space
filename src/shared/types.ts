@@ -15,6 +15,7 @@ export interface FileNode {
 /** Progress update emitted during a directory scan */
 export interface ScanProgress {
   filesScanned: number
+  currentPath: string
 }
 
 /** The API exposed to the renderer via contextBridge */

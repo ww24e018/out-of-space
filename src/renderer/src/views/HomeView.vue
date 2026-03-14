@@ -114,6 +114,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
     <div v-else-if="scanStore.isScanning && !scanStore.rootNode" class="welcome">
       <p class="scanning-text">Scanning…</p>
       <p v-if="scanStore.scanProgress" class="scanning-count">{{ scanStore.scanProgress.filesScanned.toLocaleString() }} files found</p>
+      <p v-if="scanStore.scanProgress" class="scanning-path">{{ scanStore.scanProgress.currentPath }}</p>
     </div>
     <div v-else-if="viewRoot" class="viz-container">
       <div class="viz-rootbar">
@@ -141,6 +142,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
         <div v-if="scanStore.isScanning" class="scan-overlay">
           <p class="scanning-text">Scanning…</p>
           <p v-if="scanStore.scanProgress" class="scanning-count">{{ scanStore.scanProgress.filesScanned.toLocaleString() }} files found</p>
+          <p v-if="scanStore.scanProgress" class="scanning-path">{{ scanStore.scanProgress.currentPath }}</p>
         </div>
       </div>
       <div class="status-bar">
@@ -333,5 +335,16 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   font-size: 14px;
   color: var(--c-text-muted);
   margin-top: 8px;
+}
+
+.scanning-path {
+  font-size: 11px;
+  color: var(--c-text-dim);
+  margin-top: 4px;
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
 }
 </style>

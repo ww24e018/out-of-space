@@ -96,9 +96,14 @@ describe('scanDirectory', () => {
     // Root dir + a.txt + sub dir + b.txt = 4 entries via lstat
     expect(onProgress).toHaveBeenCalledTimes(4)
 
-    // Each call receives an incrementing count
+    // Each call receives an incrementing count and a path
     const counts = onProgress.mock.calls.map((c) => c[0])
     expect(counts).toEqual([1, 2, 3, 4])
+
+    // Every call includes a path string
+    const paths = onProgress.mock.calls.map((c) => c[1])
+    expect(paths.every((p) => typeof p === 'string')).toBe(true)
+    expect(paths[0]).toBe(tmp) // root dir itself
   })
 
   it('works without onProgress callback', async () => {
