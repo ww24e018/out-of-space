@@ -75,6 +75,10 @@ A lightweight desktop app that scans a local directory and presents an interacti
 - **D3 integration pattern:** D3 computes layout only (`d3.hierarchy` + `d3.treemap`); Vue owns the DOM via `v-for` over positioned nodes in SVG. No `d3.select()` DOM manipulation.
 - **Tooltip approach:** Positioned div overlay (not SVG `<title>`) for better styling control.
 
+## Resolved Decisions (Step 5)
+
+- **Scan progress:** Main process streams live progress (file count + current path) to renderer via `webContents.send()` push channel, throttled with a generic `makeThrottled` utility. Renderer shows a semi-transparent overlay during scan (blocking interaction with stale data). The `isDestroyed()` guard on the sender prevents crashes when the window closes mid-scan.
+
 ## Open Questions
 
 (none currently)

@@ -28,7 +28,7 @@ High-level goals and progress tracking.
 - [x] "Open in Terminal" context action
 
 ### Phase 3 — Polish
-- [ ] Progress indicator during scanning
+- [x] Progress indicator during scanning
 - [ ] Breadcrumb navigation
 - [x] Keyboard navigation for selection (arrow keys)
 - [x] Colour coding (by file type or directory depth)

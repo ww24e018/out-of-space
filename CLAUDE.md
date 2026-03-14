@@ -44,6 +44,10 @@ Read these to understand the project context:
 
 IPC channel names are defined as constants in `src/shared/ipc-channels.ts`. The preload script exposes a typed `window.api` object (defined in `src/shared/types.ts` as `ElectronApi`).
 
+Two IPC patterns are in use:
+- **Request/response** (`ipcRenderer.invoke` / `ipcMain.handle`) — for one-shot operations (scan folder, select folder, shell actions).
+- **Push** (`webContents.send` / `ipcRenderer.on`) — for streaming updates from main→renderer (scan progress). The preload exposes `on`/`off` listener pairs for these channels.
+
 ### Visualisation abstraction
 
 `src/renderer/src/visualisation/` contains a shared interface (`types.ts`) and per-mode subdirectories (`treemap/`, `sunburst/`). All viz components share the same props/emits contract.

@@ -54,6 +54,7 @@ src/
 ## Features
 
 - Scan any local folder and visualise disk usage as an interactive treemap
+- Live progress indicator during scan (file count and current path)
 - Colour-coded rectangles by file type (code, images, documents, archives, etc.)
 - Drill down into subdirectories, navigate with Select Parent / Drill Into / Up
 - Hover tooltips with file name and human-readable size
