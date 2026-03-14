@@ -1,11 +1,13 @@
 export interface ColorPalette {
   name: string
+  background: string
   categories: Record<string, string>
   directories: string[]
 }
 
 export const legacyPalette: ColorPalette = {
   name: 'Legacy',
+  background: '#1e1e38',
   categories: {
     code: '#e94560',
     image: '#f5a623',
@@ -21,6 +23,7 @@ export const legacyPalette: ColorPalette = {
 
 export const solarizedPalette: ColorPalette = {
   name: 'Solarized',
+  background: '#002b36',
   categories: {
     code: '#268bd2',
     image: '#b58900',
@@ -36,6 +39,7 @@ export const solarizedPalette: ColorPalette = {
 
 export const hslRadialVariant2: ColorPalette = {
   name: 'HSL Radial 0°/37%/19% CA',
+  background: 'hsl(315, 0%, 10%)',
   categories: {
     code: 'hsl(135, 37%, 19%)',
     image: 'hsl(180, 37%, 19%)',
@@ -51,6 +55,7 @@ export const hslRadialVariant2: ColorPalette = {
 
 export const hslRadialVariant3: ColorPalette = {
   name: 'HSL Radial 9 step 298°/65%/21% IS',
+  background: 'hsl(258, 30%, 10%)',
   categories: {
     code: 'hsl(298, 65%, 21%)',
     image: 'hsl(338, 65%, 21%)',
