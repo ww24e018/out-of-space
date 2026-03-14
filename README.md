@@ -59,8 +59,8 @@ src/
 - Hover tooltips with file name and human-readable size
 - Status bar showing full path of hovered item
 - Switchable visualisation modes (treemap implemented, sunburst planned)
-- "Show in Finder" and "Open in Terminal" context actions
-- macOS-first design
+- "Reveal in File Manager" and "Open in Terminal" context actions
+- Validated on macOS and Windows 11
 
 ## License
 
