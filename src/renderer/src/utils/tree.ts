@@ -13,16 +13,34 @@ export function sortTreeBySize(node: FileNode): void {
   }
 }
 
+export interface NavMaps {
+  parent: WeakMap<FileNode, FileNode>
+  nextSibling: WeakMap<FileNode, FileNode>
+  prevSibling: WeakMap<FileNode, FileNode>
+}
+
 /**
- * DFS to locate the parent of the node at targetPath — O(n) worst case.
- * Returns null if targetPath is the root or not found.
+ * Build lookup maps for O(1) parent and sibling navigation.
+ * Call once after sorting so the sibling order matches the sorted children.
  */
-export function findParent(root: FileNode, targetPath: string): FileNode | null {
-  if (!root.children) return null
-  for (const child of root.children) {
-    if (child.path === targetPath) return root
-    const found = findParent(child, targetPath)
-    if (found) return found
+export function buildNavMaps(root: FileNode): NavMaps {
+  const parent = new WeakMap<FileNode, FileNode>()
+  const nextSibling = new WeakMap<FileNode, FileNode>()
+  const prevSibling = new WeakMap<FileNode, FileNode>()
+
+  function walk(node: FileNode): void {
+    const children = node.children
+    if (!children || children.length === 0) return
+    const len = children.length
+    for (let i = 0; i < len; i++) {
+      const child = children[i]
+      parent.set(child, node)
+      nextSibling.set(child, children[(i + 1) % len])
+      prevSibling.set(child, children[(i - 1 + len) % len])
+      walk(child)
+    }
   }
-  return null
+
+  walk(root)
+  return { parent, nextSibling, prevSibling }
 }

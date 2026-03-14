@@ -3,7 +3,6 @@ import { ref, computed, watch } from 'vue'
 import { useScanStore } from '@/stores/scan'
 import TreemapView from '@/visualisation/treemap/TreemapView.vue'
 import ContextMenu from '@/components/ContextMenu.vue'
-import { findParent } from '@/utils/tree'
 import { useKeyboardNavigation } from '@/composables/useKeyboardNavigation'
 import type { FileNode } from '@shared/types'
 
@@ -37,13 +36,13 @@ function drillIntoSelection(): void {
 
 function goUp(): void {
   if (!viewRoot.value || !scanStore.rootNode) return
-  const parent = findParent(scanStore.rootNode, viewRoot.value.path)
+  const parent = scanStore.parentOf(viewRoot.value)
   viewRoot.value = parent ?? scanStore.rootNode
 }
 
 function selectParent(): void {
   if (!scanStore.selectedNode || !scanStore.rootNode) return
-  const parent = findParent(scanStore.rootNode, scanStore.selectedNode.path)
+  const parent = scanStore.parentOf(scanStore.selectedNode)
   if (parent) scanStore.selectNode(parent)
 }
 

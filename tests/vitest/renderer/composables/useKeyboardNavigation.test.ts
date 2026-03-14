@@ -5,6 +5,7 @@ import { defineComponent, ref } from 'vue'
 import { useScanStore } from '@/stores/scan'
 import { useKeyboardNavigation } from '@/composables/useKeyboardNavigation'
 import type { KeyboardNavigationOptions } from '@/composables/useKeyboardNavigation'
+import { buildNavMaps } from '@/utils/tree'
 import type { FileNode } from '@shared/types'
 
 // Minimal wrapper component that activates the composable
@@ -66,6 +67,7 @@ describe('useKeyboardNavigation', () => {
     setActivePinia(createPinia())
     store = useScanStore()
     tree = makeTree()
+    store._setNavMaps(buildNavMaps(tree))
   })
 
   it('selects largest child on ArrowDown when no selection', () => {

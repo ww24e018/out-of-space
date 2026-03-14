@@ -124,4 +124,29 @@ describe('useScanStore', () => {
     store.selectNode(null)
     expect(store.selectedNode).toBeNull()
   })
+
+  it('builds nav maps after scan so parentOf works', async () => {
+    const child: FileNode = { name: 'file.txt', path: '/tmp/project/file.txt', size: 512, type: 'file' }
+    const fakeTree: FileNode = {
+      name: 'project',
+      path: '/tmp/project',
+      size: 512,
+      type: 'directory',
+      children: [child]
+    }
+    mockApi.scanFolder.mockResolvedValue(fakeTree)
+
+    const store = useScanStore()
+    await store.scan('/tmp/project')
+
+    // The child object from the resolved tree should be in the nav maps
+    const scannedChild = store.rootNode!.children![0]
+    expect(store.parentOf(scannedChild)).toStrictEqual(store.rootNode)
+  })
+
+  it('parentOf returns null when no maps are built', () => {
+    const store = useScanStore()
+    const node: FileNode = { name: 'a.txt', path: '/a.txt', size: 100, type: 'file' }
+    expect(store.parentOf(node)).toBeNull()
+  })
 })

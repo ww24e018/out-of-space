@@ -1,6 +1,5 @@
 import { onMounted, onUnmounted, type Ref } from 'vue'
 import { useScanStore } from '@/stores/scan'
-import { findParent } from '@/utils/tree'
 import type { FileNode } from '@shared/types'
 
 export interface KeyboardNavigationOptions {
@@ -71,7 +70,7 @@ export function useKeyboardNavigation(options: KeyboardNavigationOptions): void 
   function navigateUp(): void {
     const selected = scanStore.selectedNode!
     if (selected.path === options.viewRoot.value!.path) return
-    const parent = findParent(options.viewRoot.value!, selected.path)
+    const parent = scanStore.parentOf(selected)
     if (parent) scanStore.selectNode(parent)
   }
 
@@ -86,13 +85,9 @@ export function useKeyboardNavigation(options: KeyboardNavigationOptions): void 
   function navigateSibling(direction: -1 | 1): void {
     const selected = scanStore.selectedNode!
     if (selected.path === options.viewRoot.value!.path) return
-    const parent = findParent(options.viewRoot.value!, selected.path)
-    if (!parent) return
-    const siblings = parent.children!
-    const index = siblings.findIndex((s) => s.path === selected.path)
-    if (index === -1) return
-    const next = (index + direction + siblings.length) % siblings.length
-    scanStore.selectNode(siblings[next])
+    const sibling =
+      direction === 1 ? scanStore.nextSiblingOf(selected) : scanStore.prevSiblingOf(selected)
+    if (sibling && sibling !== selected) scanStore.selectNode(sibling)
   }
 
   onMounted(() => window.addEventListener('keydown', onKeydown))
