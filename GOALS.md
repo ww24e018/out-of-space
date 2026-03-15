@@ -35,7 +35,7 @@ High-level goals and progress tracking.
 - [x] Handle large trees gracefully (100k+ files)
 - [x] Error handling (permission denied, broken symlinks)
 - [x] Light/dark mode following OS preference (CSS custom properties)
-- [ ] App icon and basic branding
+- [x] App icon and basic branding
 
 ### Phase 4 — Release
 - [ ] macOS packaging (.dmg)
