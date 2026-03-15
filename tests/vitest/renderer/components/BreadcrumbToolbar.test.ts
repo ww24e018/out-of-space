@@ -57,31 +57,21 @@ describe('BreadcrumbToolbar', () => {
 
   it('shows "No selection" when selectedNode is null', () => {
     const wrapper = mount(BreadcrumbToolbar, {
-      props: {
-        selectedNode: null,
-        viewRoot: tree,
-        canSelectParent: false,
-        canDrillIn: false,
-        isSelectedDirectory: false
-      }
+      props: { viewRoot: tree }
     })
     expect(wrapper.find('.toolbar-empty').text()).toBe('No selection')
     expect(wrapper.findAll('.toolbar-pill')).toHaveLength(0)
   })
 
   it('shows prefix marker and pill segments for a deep selection', () => {
+    const store = useScanStore()
     const src = tree.children![0]
     const components = src.children![0]
     const file = components.children![0]
+    store.$patch({ rootNode: tree, selectedNode: file })
 
     const wrapper = mount(BreadcrumbToolbar, {
-      props: {
-        selectedNode: file,
-        viewRoot: tree,
-        canSelectParent: true,
-        canDrillIn: false,
-        isSelectedDirectory: false
-      }
+      props: { viewRoot: tree }
     })
     expect(wrapper.find('.toolbar-prefix').exists()).toBe(true)
     const pills = wrapper.findAll('.toolbar-pill')
@@ -92,15 +82,12 @@ describe('BreadcrumbToolbar', () => {
   })
 
   it('marks the last pill as current', () => {
+    const store = useScanStore()
     const src = tree.children![0]
+    store.$patch({ rootNode: tree, selectedNode: src })
+
     const wrapper = mount(BreadcrumbToolbar, {
-      props: {
-        selectedNode: src,
-        viewRoot: tree,
-        canSelectParent: true,
-        canDrillIn: true,
-        isSelectedDirectory: true
-      }
+      props: { viewRoot: tree }
     })
     const pills = wrapper.findAll('.toolbar-pill')
     expect(pills).toHaveLength(1)
@@ -108,17 +95,13 @@ describe('BreadcrumbToolbar', () => {
   })
 
   it('emits select-node when a non-current pill is clicked', async () => {
+    const store = useScanStore()
     const src = tree.children![0]
     const components = src.children![0]
+    store.$patch({ rootNode: tree, selectedNode: components })
 
     const wrapper = mount(BreadcrumbToolbar, {
-      props: {
-        selectedNode: components,
-        viewRoot: tree,
-        canSelectParent: true,
-        canDrillIn: true,
-        isSelectedDirectory: true
-      }
+      props: { viewRoot: tree }
     })
     const pills = wrapper.findAll('.toolbar-pill')
     await pills[0].trigger('click') // click "src"
@@ -126,16 +109,13 @@ describe('BreadcrumbToolbar', () => {
     expect(wrapper.emitted('select-node')![0][0]).toBe(src)
   })
 
-  it('shows action buttons based on props', () => {
+  it('shows action buttons based on store state', () => {
+    const store = useScanStore()
     const src = tree.children![0]
+    store.$patch({ rootNode: tree, selectedNode: src })
+
     const wrapper = mount(BreadcrumbToolbar, {
-      props: {
-        selectedNode: src,
-        viewRoot: tree,
-        canSelectParent: true,
-        canDrillIn: true,
-        isSelectedDirectory: true
-      }
+      props: { viewRoot: tree }
     })
     const buttons = wrapper.findAll('.toolbar-button')
     const labels = buttons.map((b) => b.text())
@@ -146,15 +126,12 @@ describe('BreadcrumbToolbar', () => {
   })
 
   it('hides Terminal and Drill Into for file selections', () => {
+    const store = useScanStore()
     const file = tree.children![0].children![0].children![0]
+    store.$patch({ rootNode: tree, selectedNode: file })
+
     const wrapper = mount(BreadcrumbToolbar, {
-      props: {
-        selectedNode: file,
-        viewRoot: tree,
-        canSelectParent: true,
-        canDrillIn: false,
-        isSelectedDirectory: false
-      }
+      props: { viewRoot: tree }
     })
     const labels = wrapper.findAll('.toolbar-button').map((b) => b.text())
     expect(labels).toContain('Reveal')

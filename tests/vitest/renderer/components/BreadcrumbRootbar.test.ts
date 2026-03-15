@@ -56,18 +56,22 @@ describe('BreadcrumbRootbar', () => {
   })
 
   it('shows only the root path when not drilled in', () => {
+    const store = useScanStore()
+    store.$patch({ rootNode: tree })
     const wrapper = mount(BreadcrumbRootbar, {
-      props: { viewRoot: tree, rootNode: tree, isScanning: false, isDrilledIn: false }
+      props: { viewRoot: tree }
     })
     expect(wrapper.find('.rootbar-prefix').text()).toBe('/Users/test/project')
     expect(wrapper.findAll('.rootbar-segment')).toHaveLength(0)
   })
 
   it('shows clickable segments when drilled in', () => {
+    const store = useScanStore()
+    store.$patch({ rootNode: tree })
     const src = tree.children![0]
     const components = src.children![0]
     const wrapper = mount(BreadcrumbRootbar, {
-      props: { viewRoot: components, rootNode: tree, isScanning: false, isDrilledIn: true }
+      props: { viewRoot: components }
     })
     expect(wrapper.find('.rootbar-prefix').text()).toBe('/Users/test/project')
     const segments = wrapper.findAll('.rootbar-segment')
@@ -77,9 +81,11 @@ describe('BreadcrumbRootbar', () => {
   })
 
   it('marks the last segment as current (bold, not clickable)', () => {
+    const store = useScanStore()
+    store.$patch({ rootNode: tree })
     const src = tree.children![0]
     const wrapper = mount(BreadcrumbRootbar, {
-      props: { viewRoot: src, rootNode: tree, isScanning: false, isDrilledIn: true }
+      props: { viewRoot: src }
     })
     const segments = wrapper.findAll('.rootbar-segment')
     expect(segments).toHaveLength(1)
@@ -87,10 +93,12 @@ describe('BreadcrumbRootbar', () => {
   })
 
   it('emits navigate with the correct node when a segment is clicked', async () => {
+    const store = useScanStore()
+    store.$patch({ rootNode: tree })
     const src = tree.children![0]
     const components = src.children![0]
     const wrapper = mount(BreadcrumbRootbar, {
-      props: { viewRoot: components, rootNode: tree, isScanning: false, isDrilledIn: true }
+      props: { viewRoot: components }
     })
     const segments = wrapper.findAll('.rootbar-segment')
     await segments[0].trigger('click') // click "src"
@@ -99,8 +107,10 @@ describe('BreadcrumbRootbar', () => {
   })
 
   it('emits scan-other when Open button is clicked', async () => {
+    const store = useScanStore()
+    store.$patch({ rootNode: tree })
     const wrapper = mount(BreadcrumbRootbar, {
-      props: { viewRoot: tree, rootNode: tree, isScanning: false, isDrilledIn: false }
+      props: { viewRoot: tree }
     })
     const buttons = wrapper.findAll('.toolbar-button')
     const openBtn = buttons.find((b) => b.text() === 'Open')!
@@ -109,8 +119,10 @@ describe('BreadcrumbRootbar', () => {
   })
 
   it('emits rescan when Rescan button is clicked', async () => {
+    const store = useScanStore()
+    store.$patch({ rootNode: tree })
     const wrapper = mount(BreadcrumbRootbar, {
-      props: { viewRoot: tree, rootNode: tree, isScanning: false, isDrilledIn: false }
+      props: { viewRoot: tree }
     })
     const buttons = wrapper.findAll('.toolbar-button')
     const rescanBtn = buttons.find((b) => b.text() === 'Rescan')!
@@ -119,13 +131,15 @@ describe('BreadcrumbRootbar', () => {
   })
 
   it('shows Up button only when drilled in', () => {
+    const store = useScanStore()
+    store.$patch({ rootNode: tree })
     const notDrilled = mount(BreadcrumbRootbar, {
-      props: { viewRoot: tree, rootNode: tree, isScanning: false, isDrilledIn: false }
+      props: { viewRoot: tree }
     })
     expect(notDrilled.findAll('.toolbar-button').map((b) => b.text())).not.toContain('Up')
 
     const drilled = mount(BreadcrumbRootbar, {
-      props: { viewRoot: tree.children![0], rootNode: tree, isScanning: false, isDrilledIn: true }
+      props: { viewRoot: tree.children![0] }
     })
     expect(drilled.findAll('.toolbar-button').map((b) => b.text())).toContain('Up')
   })

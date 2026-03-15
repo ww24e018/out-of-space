@@ -6,9 +6,6 @@ import { collectAncestors } from '@/utils/tree'
 
 const props = defineProps<{
   viewRoot: FileNode
-  rootNode: FileNode
-  isScanning: boolean
-  isDrilledIn: boolean
 }>()
 
 const emit = defineEmits<{
@@ -22,9 +19,13 @@ const emit = defineEmits<{
 const scanStore = useScanStore()
 const pathSep = navigator.platform?.startsWith('Win') ? '\\' : '/'
 
+const isDrilledIn = computed(() =>
+  scanStore.rootNode !== null && props.viewRoot.path !== scanStore.rootNode.path
+)
+
 const segments = computed(() => {
-  if (!props.isDrilledIn) return []
-  const chain = collectAncestors(props.viewRoot, props.rootNode, (n) => scanStore.parentOf(n))
+  if (!isDrilledIn.value || !scanStore.rootNode) return []
+  const chain = collectAncestors(props.viewRoot, scanStore.rootNode, (n) => scanStore.parentOf(n))
   // Remove the first element (rootNode) — it's shown as the dimmed prefix
   return chain.slice(1)
 })
@@ -34,14 +35,14 @@ const segments = computed(() => {
   <div class="viz-rootbar">
     <button
       class="toolbar-button"
-      :disabled="isScanning"
+      :disabled="scanStore.isScanning"
       @click="emit('scan-other')"
       @mouseenter="emit('status-hint', 'Open a different folder to scan')"
       @mouseleave="emit('status-hint', null)"
     >Open</button>
     <button
       class="toolbar-button"
-      :disabled="isScanning"
+      :disabled="scanStore.isScanning"
       @click="emit('rescan')"
       @mouseenter="emit('status-hint', 'Rescan the current root directory')"
       @mouseleave="emit('status-hint', null)"
@@ -55,7 +56,7 @@ const segments = computed(() => {
     >Up</button>
 
     <span class="rootbar-path">
-      <span class="rootbar-prefix">{{ rootNode.path }}</span>
+      <span class="rootbar-prefix">{{ scanStore.rootNode!.path }}</span>
       <template v-for="(seg, i) in segments" :key="seg.path">
         <span class="rootbar-separator">{{ pathSep }}</span>
         <span

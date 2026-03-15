@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useScanStore } from '@/stores/scan'
 import TreemapView from '@/visualisation/treemap/TreemapView.vue'
 import ContextMenu from '@/components/ContextMenu.vue'
@@ -68,22 +68,6 @@ function onHover(node: FileNode | null): void {
   hoveredPath.value = node?.path ?? null
 }
 
-const isDrilledIn = computed(() =>
-  viewRoot.value !== null && scanStore.rootNode !== null && viewRoot.value.path !== scanStore.rootNode.path
-)
-
-const canSelectParent = computed(() =>
-  scanStore.selectedNode !== null && scanStore.rootNode !== null && scanStore.selectedNode.path !== scanStore.rootNode.path
-)
-
-const canDrillIn = computed(() =>
-  scanStore.selectedNode?.type === 'directory'
-)
-
-const isSelectedDirectory = computed(() =>
-  scanStore.selectedNode?.type === 'directory'
-)
-
 const contextMenu = ref<{ node: FileNode; x: number; y: number } | null>(null)
 
 function onContextMenu(payload: { node: FileNode; x: number; y: number }): void {
@@ -127,9 +111,6 @@ async function openInTerminal(node?: FileNode): Promise<void> {
     <div v-else-if="viewRoot" class="viz-container">
       <BreadcrumbRootbar
         :view-root="viewRoot"
-        :root-node="scanStore.rootNode!"
-        :is-scanning="scanStore.isScanning"
-        :is-drilled-in="isDrilledIn"
         @scan-other="scanOther"
         @rescan="rescan"
         @go-up="goUp"
@@ -137,11 +118,7 @@ async function openInTerminal(node?: FileNode): Promise<void> {
         @status-hint="(h) => statusHint = h"
       />
       <BreadcrumbToolbar
-        :selected-node="scanStore.selectedNode"
         :view-root="viewRoot"
-        :can-select-parent="canSelectParent"
-        :can-drill-in="canDrillIn"
-        :is-selected-directory="isSelectedDirectory"
         @select-node="scanStore.selectNode"
         @drill-into="drillIntoSelection"
         @show-in-finder="showInFinder()"

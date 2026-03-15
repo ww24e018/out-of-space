@@ -5,11 +5,7 @@ import { useScanStore } from '@/stores/scan'
 import { collectAncestors } from '@/utils/tree'
 
 const props = defineProps<{
-  selectedNode: FileNode | null
   viewRoot: FileNode
-  canSelectParent: boolean
-  canDrillIn: boolean
-  isSelectedDirectory: boolean
 }>()
 
 const emit = defineEmits<{
@@ -23,14 +19,26 @@ const emit = defineEmits<{
 
 const scanStore = useScanStore()
 
+const hasSelection = computed(() => scanStore.selectedNode !== null)
+
+const isSelectedDirectory = computed(() =>
+  scanStore.selectedNode?.type === 'directory'
+)
+
+const canDrillIn = computed(() =>
+  scanStore.selectedNode?.type === 'directory'
+)
+
+const canSelectParent = computed(() =>
+  scanStore.selectedNode !== null && scanStore.rootNode !== null && scanStore.selectedNode.path !== scanStore.rootNode.path
+)
+
 const segments = computed(() => {
-  if (!props.selectedNode) return []
-  const chain = collectAncestors(props.selectedNode, props.viewRoot, (n) => scanStore.parentOf(n))
+  if (!scanStore.selectedNode) return []
+  const chain = collectAncestors(scanStore.selectedNode, props.viewRoot, (n) => scanStore.parentOf(n))
   // Remove the first element (viewRoot) — it's represented by the ▸ prefix
   return chain.slice(1)
 })
-
-const hasSelection = computed(() => props.selectedNode !== null)
 </script>
 
 <template>
