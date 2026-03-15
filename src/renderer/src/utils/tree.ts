@@ -44,3 +44,26 @@ export function buildNavMaps(root: FileNode): NavMaps {
   walk(root)
   return { parent, nextSibling, prevSibling }
 }
+
+/**
+ * Collect the ancestor chain from `stop` down to `node` (inclusive, root-first order).
+ * Returns [stop, ..., node]. Returns [node] if node === stop.
+ * Returns an empty array if stop is not an ancestor of node.
+ */
+export function collectAncestors(
+  node: FileNode,
+  stop: FileNode,
+  parentOf: (n: FileNode) => FileNode | null
+): FileNode[] {
+  const chain: FileNode[] = [node]
+  let current = node
+  // Compare by path rather than identity to handle Vue reactive proxies
+  while (current.path !== stop.path) {
+    const p = parentOf(current)
+    if (!p) return []
+    chain.push(p)
+    current = p
+  }
+  chain.reverse()
+  return chain
+}

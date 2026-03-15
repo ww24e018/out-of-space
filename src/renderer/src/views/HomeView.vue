@@ -3,6 +3,8 @@ import { ref, computed, watch } from 'vue'
 import { useScanStore } from '@/stores/scan'
 import TreemapView from '@/visualisation/treemap/TreemapView.vue'
 import ContextMenu from '@/components/ContextMenu.vue'
+import BreadcrumbRootbar from '@/components/BreadcrumbRootbar.vue'
+import BreadcrumbToolbar from '@/components/BreadcrumbToolbar.vue'
 import { useKeyboardNavigation } from '@/composables/useKeyboardNavigation'
 import type { FileNode } from '@shared/types'
 
@@ -51,6 +53,14 @@ function rescan(): void {
   scanStore.scan(scanStore.rootNode.path)
 }
 
+function scanOther(): void {
+  scanStore.selectAndScan()
+}
+
+function navigateTo(node: FileNode): void {
+  viewRoot.value = node
+}
+
 const hoveredPath = ref<string | null>(null)
 const statusHint = ref<string | null>(null)
 
@@ -69,8 +79,6 @@ const canSelectParent = computed(() =>
 const canDrillIn = computed(() =>
   scanStore.selectedNode?.type === 'directory'
 )
-
-const hasSelection = computed(() => scanStore.selectedNode !== null)
 
 const isSelectedDirectory = computed(() =>
   scanStore.selectedNode?.type === 'directory'
@@ -117,19 +125,30 @@ async function openInTerminal(node?: FileNode): Promise<void> {
       <p v-if="scanStore.scanProgress" class="scanning-path">{{ scanStore.scanProgress.currentPath }}</p>
     </div>
     <div v-else-if="viewRoot" class="viz-container">
-      <div class="viz-rootbar">
-        <button class="toolbar-button" :disabled="scanStore.isScanning" @click="rescan" @mouseenter="statusHint = 'Rescan the current root directory'" @mouseleave="statusHint = null">Rescan</button>
-        <button v-if="isDrilledIn" class="toolbar-button" @click="goUp" @mouseenter="statusHint = 'Navigate up to the parent directory'" @mouseleave="statusHint = null">Up</button>
-        <span class="viz-path">{{ viewRoot.path }}</span>
-      </div>
-      <div class="viz-toolbar">
-        <span v-if="hasSelection" class="selection-path">{{ scanStore.selectedNode!.path }}</span>
-        <span v-else class="selection-path selection-path--empty">No selection</span>
-        <button class="toolbar-button" :disabled="!hasSelection" @click="showInFinder()" @mouseenter="statusHint = 'Reveal the selected item in the system file manager'" @mouseleave="statusHint = null">Reveal</button>
-        <button v-if="isSelectedDirectory" class="toolbar-button" @click="openInTerminal()" @mouseenter="statusHint = 'Open a terminal at the selected directory'" @mouseleave="statusHint = null">Terminal</button>
-        <button v-if="canDrillIn" class="toolbar-button" @click="drillIntoSelection" @mouseenter="statusHint = 'Drill into the selected directory'" @mouseleave="statusHint = null">Drill Into</button>
-        <button v-if="canSelectParent" class="toolbar-button" @click="selectParent" @mouseenter="statusHint = 'Select the parent of the current selection'" @mouseleave="statusHint = null">Select Parent</button>
-      </div>
+      <BreadcrumbRootbar
+        :view-root="viewRoot"
+        :root-node="scanStore.rootNode!"
+        :is-scanning="scanStore.isScanning"
+        :is-drilled-in="isDrilledIn"
+        @scan-other="scanOther"
+        @rescan="rescan"
+        @go-up="goUp"
+        @navigate="navigateTo"
+        @status-hint="(h) => statusHint = h"
+      />
+      <BreadcrumbToolbar
+        :selected-node="scanStore.selectedNode"
+        :view-root="viewRoot"
+        :can-select-parent="canSelectParent"
+        :can-drill-in="canDrillIn"
+        :is-selected-directory="isSelectedDirectory"
+        @select-node="scanStore.selectNode"
+        @drill-into="drillIntoSelection"
+        @show-in-finder="showInFinder()"
+        @open-in-terminal="openInTerminal()"
+        @select-parent="selectParent"
+        @status-hint="(h) => statusHint = h"
+      />
       <div class="viz-area">
         <TreemapView
           :data="viewRoot"
@@ -206,84 +225,6 @@ async function openInTerminal(node?: FileNode): Promise<void> {
   flex-direction: column;
   flex: 1;
   min-height: 0;
-}
-
-.viz-rootbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  background: var(--c-surface);
-  border-bottom: 1px solid var(--c-border);
-  flex-shrink: 0;
-}
-
-.viz-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  background: var(--c-surface-alt);
-  border-bottom: 1px solid var(--c-border);
-  flex-shrink: 0;
-}
-
-.viz-path {
-  font-size: 12px;
-  color: var(--c-text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.selection-path {
-  flex: 1;
-  min-width: 0;
-  font-size: 12px;
-  color: var(--c-text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  direction: rtl;
-}
-
-.selection-path--empty {
-  color: var(--c-text-muted);
-  direction: ltr;
-}
-
-.toolbar-button {
-  flex-shrink: 0;
-  white-space: nowrap;
-  padding: 3px 10px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--c-btn-text);
-  background: var(--c-btn-bg);
-  border: 1px solid var(--c-btn-border);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.toolbar-button:hover:not(:disabled) {
-  background: var(--c-btn-hover);
-}
-
-.toolbar-button:disabled {
-  opacity: 0.4;
-  cursor: default;
-}
-
-.toolbar-button--primary {
-  color: var(--c-primary-text);
-  background: var(--c-primary-bg);
-  border-color: var(--c-primary-bg);
-}
-
-.toolbar-button--primary:hover {
-  background: var(--c-primary-hover);
-  border-color: var(--c-primary-hover);
 }
 
 .status-bar {
