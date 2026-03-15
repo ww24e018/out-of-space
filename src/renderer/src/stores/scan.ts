@@ -22,6 +22,7 @@ export const useScanStore = defineStore('scan', () => {
   async function scan(folderPath: string): Promise<void> {
     isScanning.value = true
     error.value = null
+    selectedNode.value = null
     scanProgress.value = null
 
     window.api.onScanProgress((progress) => {
