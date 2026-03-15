@@ -100,12 +100,6 @@ const hasSelection = computed(() => props.selectedNode !== null)
   align-items: center;
   gap: 2px;
   overflow: hidden;
-  direction: rtl;
-}
-
-/* Force LTR rendering for each child inside the RTL container */
-.toolbar-breadcrumbs > * {
-  direction: ltr;
 }
 
 .toolbar-prefix {

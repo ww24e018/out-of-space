@@ -20,6 +20,7 @@ const emit = defineEmits<{
 }>()
 
 const scanStore = useScanStore()
+const pathSep = navigator.platform?.startsWith('Win') ? '\\' : '/'
 
 const segments = computed(() => {
   if (!props.isDrilledIn) return []
@@ -56,7 +57,7 @@ const segments = computed(() => {
     <span class="rootbar-path">
       <span class="rootbar-prefix">{{ rootNode.path }}</span>
       <template v-for="(seg, i) in segments" :key="seg.path">
-        <span class="rootbar-separator">/</span>
+        <span class="rootbar-separator">{{ pathSep }}</span>
         <span
           v-if="i < segments.length - 1"
           class="rootbar-segment"
