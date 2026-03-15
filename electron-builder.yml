@@ -11,6 +11,8 @@ files:
   - "!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}"
 asar: true
 mac:
+  icon: icon.icon
+  identity: null
   target:
     - dmg
     - zip
